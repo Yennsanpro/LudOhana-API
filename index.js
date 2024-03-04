@@ -1,5 +1,5 @@
 require('dotenv').config()
-const router = require('./api/routes/index.routes')
+const router = require('./api/routes/index.route')
 const morgan = require('morgan')
 
 const express = require('express')

@@ -1,8 +1,28 @@
 const router = require("express").Router;
 const EventModel = require("../models/event.model");
+const { Op } = require('sequelize');
+
+
+const getAllEventsHandler = async(req,res)=>{
+  console.log(req.query)
+  try {
+    if(req.query.filter === "previous"){
+      console.log("estoy en get previous")
+      return getPreviousEvents(req,res)
+    }else{
+      console.log("estoy en get events")
+      return getAllEvents(req,res)
+    }
+  } catch (error) {
+    return res.status(500).send("Error getting events");
+  }
+ 
+}
 
 const getAllEvents = async (req, res) => {
+ 
   try {
+  
     const events = await EventModel.findAll();
     if (events.length === 0) {
       return res.status(404).send("No events found");
@@ -11,9 +31,44 @@ const getAllEvents = async (req, res) => {
     return res.status(200).json(events);
   } catch (error) {
     console.error("Error getting events:", error);
-    return res.status(500).send("Error getting events");
+    return res.status(500).send("Error getting next events");
   }
 };
+
+
+const  getPreviousEvents = async (req, res) => {
+  const actualTime = Date.now()
+
+   try { 
+      
+     console.log(actualTime +" hora actual")
+
+     const events = await EventModel.findAll({ 
+       where:{
+         dateEnd:{
+           [Op.lt]:actualTime
+          }
+        }
+      })
+      //console.log(events +" hora fin evento ")
+      //console.log(events[0].dataValues.dateEnd )
+      //console.log(events)
+      if (events.length === 0) {
+         
+          return res.status(404).send("No previous events found");
+          
+        }
+     
+        return res.status(200).json(events);
+  
+} catch (error) {
+  
+  res.status(500).send("Error finding previous events");
+  throw new Error(error);
+}
+};
+
+
 
 const getEventById = async (req, res) => {
   try {
@@ -30,21 +85,8 @@ const getEventById = async (req, res) => {
   }
 };
 
-/*const getAvailableEvents = async (req, res) => {
-    try {
-        const events = await EventModel.findAll();
-        let now = new Date()
-        
-        const futureEvents = events.filter(event=> event.dateEnd>now )
-        if (futureEvents.length === 0) {
-            return res.status(404).send('No upcoming events found');
-        }
-        return res.status(200).json(futureEvents);
-    } catch (error) {
-        console.error('Error getting events:', error);
-        return res.status(500).send('Error getting events');
-    }
-};*/
+
+
 
 const createEvent = async (req, res) => {
   try {
@@ -92,8 +134,10 @@ const deleteEvent = async (req, res) => {
 };
 
 module.exports = {
+  getAllEventsHandler,
   getAllEvents,
   getEventById,
+  getPreviousEvents,
   createEvent,
   updateEvent,
   deleteEvent,

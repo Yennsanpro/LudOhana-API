@@ -24,7 +24,7 @@ const signup = async (req, res) => { //function user can signup
     }
 } 
 
-const login = async (req,res) => { // User can login
+const login = async (req,res) => { // function User can login
 
     try {
         const user = await UserModel.findOne({
@@ -50,11 +50,24 @@ const login = async (req,res) => { // User can login
         res.satatus(500).send('Error login.up')
     }
  }
+ async function getUser(req, res) {
+	try {
+		const user = await UserModel.findByPk(req.params.id)
+		if (user) {
+			return res.status(200).json(user)
+		} else {
+			return res.status(404).send('User not found')
+		}
+	} catch (error) {
+		res.status(500).send(error.message)
+	}
+}
 
 
 
 
 module.exports = {
     signup,
-    login
+    login,
+    getUser
 }

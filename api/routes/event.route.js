@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const {
   getAllEventsHandler,
+  getEventsByState,
   getEventById,
   createEvent,
   updateEvent,
@@ -8,6 +9,7 @@ const {
 } = require("../controllers/event.controller");
 
 router.get("/", getAllEventsHandler);
+router.get("/:state", getEventsByState);
 router.get("/:id", getEventById);
 router.post("/", createEvent);
 router.put("/:id", updateEvent);

@@ -3,11 +3,13 @@ const EventModel = require("../models/event.model");
 const { Op } = require("sequelize");
 
 const getAllEventsHandler = async (req, res) => {
-  console.log(req.query);
+  console.log(Object.keys(req.query));
   try {
     if (req.query.filter === "previous") {
-      console.log("estoy en get previous");
+      console.log("estoy en get previous " + req.query.filter);
       return getPreviousEvents(req, res);
+    } else if (Object.keys(req.query)[0] === "state") {
+      return getEventsByState(req, res);
     } else {
       console.log("estoy en get events");
       return getCurrentsEvents(req, res);
@@ -34,7 +36,7 @@ const getPreviousEvents = async (req, res) => {
     if (events.length === 0) {
       return res.status(404).send("No previous events found");
     }
-
+    console.log(Object.keys(req.query) + " clave");
     return res.status(200).json(events);
   } catch (error) {
     res.status(500).send("Error finding previous events");
@@ -44,6 +46,7 @@ const getPreviousEvents = async (req, res) => {
 
 const getCurrentsEvents = async (req, res) => {
   const actualTime = Date.now();
+
   try {
     const events = await EventModel.findAll({
       where: {
@@ -55,9 +58,28 @@ const getCurrentsEvents = async (req, res) => {
     if (events.length === 0) {
       return res.status(404).send("No currents events found");
     }
+
     return res.status(200).json(events);
   } catch (error) {
     res.status(500).send("Error finding currents events");
+    throw new Error(error);
+  }
+};
+
+const getEventsByState = async (req, res) => {
+  try {
+    const events = await EventModel.findAll({
+      where: {
+        state: req.query.state,
+      },
+    });
+
+    if (events.length === 0) {
+      return res.status(404).send(`No ${req.params.state} events found`);
+    }
+    return res.status(200).json(events);
+  } catch (error) {
+    res.status(500).send(`Error finding ${req.params.state} events`);
     throw new Error(error);
   }
 };
@@ -66,7 +88,6 @@ const getEventById = async (req, res) => {
   try {
     const event = await EventModel.findByPk(req.params.id);
     if (event) {
-      console.log(event.dateEnd);
       return res.status(200).json(event);
     } else {
       return res.status(404).send("Event not found");
@@ -125,6 +146,7 @@ const deleteEvent = async (req, res) => {
 module.exports = {
   getAllEventsHandler,
   getCurrentsEvents,
+  getEventsByState,
   getEventById,
   getPreviousEvents,
   createEvent,

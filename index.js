@@ -1,4 +1,5 @@
 require('dotenv').config()
+const router = require('./api/routes/index.route')
 const morgan = require('morgan')
 
 const express = require('express')
@@ -9,6 +10,7 @@ const dbSync = require ('./db/sync')
 
 api.use(morgan('dev'))
 api.use(express.json())
+api.use('/api',router)
 
 api.get('/', (req, res) => res.send('Connected') )
 api.use('/api', require('./api/routes'))

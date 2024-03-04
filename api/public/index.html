@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LudOhana</title>
+    
+</head>
+
+<body>
+    <button id="checkout">Pay</button>
+
+    <script>
+        const button = document.getElementById('checkout')
+        button.addEventListener('click', async () => {
+            const res = await fetch ('/checkout', {
+                method: 'POST'
+            })
+            console.log(res)
+
+            const url = await res.json()
+            console.log(url)
+            window.location.href = url
+        })
+    </script>
+</body>
+
+</html>

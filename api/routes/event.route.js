@@ -1,7 +1,6 @@
 const router = require("express").Router();
 const {
   getAllEventsHandler,
-  getAllEvents,
   getEventById,
   createEvent,
   updateEvent,

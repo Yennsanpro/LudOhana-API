@@ -11,7 +11,7 @@ const getAllEventsHandler = async(req,res)=>{
       return getPreviousEvents(req,res)
     }else{
       console.log("estoy en get events")
-      return getAllEvents(req,res)
+      return getCurrentsEvents(req,res)
     }
   } catch (error) {
     return res.status(500).send("Error getting events");
@@ -19,7 +19,7 @@ const getAllEventsHandler = async(req,res)=>{
  
 }
 
-const getAllEvents = async (req, res) => {
+/* const getCurrentEvents = async (req, res) => {
  
   try {
   
@@ -33,7 +33,7 @@ const getAllEvents = async (req, res) => {
     console.error("Error getting events:", error);
     return res.status(500).send("Error getting next events");
   }
-};
+}; */
 
 
 const  getPreviousEvents = async (req, res) => {
@@ -67,6 +67,28 @@ const  getPreviousEvents = async (req, res) => {
   throw new Error(error);
 }
 };
+
+const getCurrentsEvents = async(req,res)=>{
+  const actualTime = Date.now()
+  try {
+    const events = await EventModel.findAll({ 
+      where:{
+        dateStart:{
+          [Op.gt]:actualTime
+         }
+       }
+     })
+     if (events.length === 0) {
+        
+         return res.status(404).send("No currents events found");
+         
+       }
+       return res.status(200).json(events);
+  } catch (error) {
+    res.status(500).send("Error finding currents events");
+    throw new Error(error);
+  }
+}
 
 
 
@@ -135,7 +157,7 @@ const deleteEvent = async (req, res) => {
 
 module.exports = {
   getAllEventsHandler,
-  getAllEvents,
+  getCurrentsEvents,
   getEventById,
   getPreviousEvents,
   createEvent,

@@ -1,11 +1,11 @@
-//archivo creado para la sincronizAcion
 
-// const UserModel = require('../api/models/user.model')
+
+const EventModel = require('../api/models/event.model')
 
 
 const dbSync =async() => {
     try {
-        //await UserModel.sync({alter:true})
+        //await EventModel.sync({alter:true})
     }catch(error){
         throw new Error(error)
     }

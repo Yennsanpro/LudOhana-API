@@ -41,4 +41,6 @@ const UserModel = sequelize.define('user', {
    allowNull:false
 },
     })
+
+    
 module.exports = UserModel

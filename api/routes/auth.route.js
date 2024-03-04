@@ -2,8 +2,8 @@ const router = require ('express').Router()
 
 const {
     signup,//comes from auth controller
-    //login
-} = require ('../controllers/auth.contoller')
+   
+} = require ('../controllers/auth.controller')
 
 
 

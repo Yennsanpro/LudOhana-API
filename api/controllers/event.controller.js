@@ -1,5 +1,6 @@
 const router = require("express").Router;
 const EventModel = require("../models/event.model");
+const UserModel = require("../models/user.model");
 const { Op } = require("sequelize");
 
 const getAllEventsHandler = async (req, res) => {
@@ -64,7 +65,7 @@ const getCurrentsEvents = async (req, res) => {
   }
 };
 
- const getEventsByState = async (req, res) => {
+ const getEventsByState = async (req, res) => { // by admin
   try {
     const events = await EventModel.findAll({
       where: {
@@ -76,6 +77,21 @@ const getCurrentsEvents = async (req, res) => {
       return res.status(404).send(`No ${req.params.state} events found`);
     }
     return res.status(200).json(events);
+  } catch (error) {
+    res.status(500).send(`Error finding ${req.params.state} events`);
+    throw new Error(error);
+  }
+}; 
+
+const getEventByState = async (req, res) => { // by user
+  try {
+    const event = await EventModel.findByPk(req.params.eventId);
+    const user = await UserModel.findByPk(req.params.userId);
+
+    // if (events.length === 0) {
+    //   return res.status(404).send(`No ${req.params.state} events found`);
+    // }
+    // return res.status(200).json(events);
   } catch (error) {
     res.status(500).send(`Error finding ${req.params.state} events`);
     throw new Error(error);

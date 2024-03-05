@@ -18,7 +18,7 @@ const signup = async (req, res) => { //function user can signup
         )
 
         res.status(200).json({ token: token, message: 'Account created' })
-    } catch (error) {
+    } catch (error) {ibutionModel
         console.log(error)
         res.status(500).send('Error Signing up')
     }

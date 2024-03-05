@@ -6,8 +6,10 @@ const express = require('express')
 const api = express()
 const path = require('path')
 
-const sequelize = require ('./db')
-const dbSync = require ('./db/sync')
+const sequelize = require('./db')
+
+const {addRelations} = require('./db/relationships')
+const dbSync = require('./db/sync')
 
 api.use(morgan('dev'))
 api.use(express.json())
@@ -20,6 +22,8 @@ api.use(express.static(path.resolve('api/public')))
 const dbCheck = async() => {
     try {
         await sequelize.authenticate()
+        addRelations() 
+        console.log('aaaaaaaaaaaaaaaaaaaaaaa')
         await dbSync()
         console.log('connected to DB')
     }catch (error){

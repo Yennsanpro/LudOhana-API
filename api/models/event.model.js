@@ -33,6 +33,9 @@ const EventModel = sequelize.define(
     state: {
       type: DataTypes.STRING,
       allowNull: false,
+      validate:{
+        isIn:[['Propoused','Pending','Aproved','Rejected']]
+      }
       
     },
     participants: {

@@ -1,4 +1,6 @@
 const router = require("express").Router();
+const { checkAuth, checkAdmin } = require("../middlewares/checkAuth");
+
 const {
   getAllEventsHandler,
   getEventById,
@@ -9,8 +11,8 @@ const {
 
 router.get("/", getAllEventsHandler);
 router.get("/:id", getEventById);
-router.post("/", createEvent);
-router.put("/:id", updateEvent);
-router.delete("/:id", deleteEvent);
+router.post("/", checkAuth,createEvent);
+router.put("/:id",checkAdmin,updateEvent);
+router.delete("/:id",checkAdmin,deleteEvent);
 
 module.exports = router;

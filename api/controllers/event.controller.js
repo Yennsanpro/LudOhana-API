@@ -98,6 +98,13 @@ const getEventById = async (req, res) => {
 
 const createEvent = async (req, res) => {
   try {
+    if(res.locals.user.role === "admin"){
+        req.body.state = "Aproved"
+    }
+    if(res.locals.user.role === "user"){
+      req.body.state = "Propoused"
+  }
+
     const event = await EventModel.create(req.body);
     res.status(200).json(event);
   } catch (error) {

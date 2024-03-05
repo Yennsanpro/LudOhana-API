@@ -42,6 +42,9 @@ const EventModel = sequelize.define(
       type: DataTypes.INTEGER,
       allowNull: false,
     },
+    inscribed: {
+      type: DataTypes.INTEGER,
+    },
     latitude: {
       type: DataTypes.DOUBLE,
       allowNull: true,

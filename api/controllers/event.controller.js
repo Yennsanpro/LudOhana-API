@@ -1,6 +1,7 @@
 const router = require("express").Router;
 const EventModel = require("../models/event.model");
 const UserModel = require("../models/user.model");
+const sequelize = require('../../db/index.js')
 const { Op } = require("sequelize");
 
 const getAllEventsHandler = async (req, res) => {
@@ -10,7 +11,6 @@ const getAllEventsHandler = async (req, res) => {
     } else if (Object.keys(req.query)[0] === "state") {
       return getEventsByState(req, res);
     } else {
-      console.log("estoy en get events");
       return getCurrentsEvents(req, res);
     }
   } catch (error) {
@@ -22,8 +22,6 @@ const getPreviousEvents = async (req, res) => {
   const actualTime = Date.now();
 
   try {
-    console.log(actualTime + " hora actual");
-
     const events = await EventModel.findAll({
       where: {
         dateEnd: {
@@ -35,7 +33,6 @@ const getPreviousEvents = async (req, res) => {
     if (events.length === 0) {
       return res.status(404).send("No previous events found");
     }
-    console.log(Object.keys(req.query) + " clave");
     return res.status(200).json(events);
   } catch (error) {
     res.status(500).send("Error finding previous events");
@@ -88,7 +85,7 @@ const getEventByState = async (req, res) => { // by user
     const user = await UserModel.findByPk(req.params.userId);
     const events = await user.getEvents(({ joinTableAttributes: [] }))
     if (events.length === 0) {
-       return res.status(404).send(`No events of user found`);
+      return res.status(404).send(`No events of user found`);
     }
     return res.status(200).json(events);
   } catch (error) {
@@ -122,6 +119,31 @@ const createEvent = async (req, res) => {
 
     const event = await EventModel.create(req.body);
     res.status(200).json(event);
+  } catch (error) {
+    res.status(500).send("Error creating event");
+    throw new Error(error);
+  }
+};
+
+const registerUserEvent = async (req, res) => {
+  try {
+    const [eventExist] = await EventModel.update(
+      { inscribed: sequelize.literal(`inscribed + ${req.body.inscribed}`) },
+      {
+      returning: true,
+      where: {
+        id: req.params.eventId,
+      },
+    });
+    if (eventExist !== 0) {
+      const event = await EventModel.findByPk(req.params.eventId)
+      const user = await UserModel.findByPk(req.params.userId)
+      const result = await event.addUser(user)
+
+      return res.status(200).json(result);
+    } else {
+      return res.status(404).send("event not found");
+    }
   } catch (error) {
     res.status(500).send("Error creating event");
     throw new Error(error);
@@ -168,6 +190,7 @@ module.exports = {
   getEventById,
   getEventByState,
   createEvent,
+  registerUserEvent,
   updateEvent,
   deleteEvent,
 };

@@ -8,7 +8,6 @@ const checkAuth = (req, res, next) => { // Just for login without autentication
     jwt.verify( req.headers.authorization,
         process.env.JWT_SECRET,
         async (err, payload) => {
-            console.log(payload)
             try { 
                 if (err) return res.status(401).send('Token not valid. Unauthorized')
                 const user = await UserModel.findOne({
@@ -27,7 +26,6 @@ const checkAuth = (req, res, next) => { // Just for login without autentication
 } 
 
 const checkAdmin = (req, res, next) => {
-    console.log (res.locals.user)
     if(res.locals.user.role!=='admin') {
        return res.status(401).send('User not authotized')
     }else{

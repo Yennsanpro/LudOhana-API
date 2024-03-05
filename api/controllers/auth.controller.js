@@ -82,7 +82,6 @@ async function updateUser(req, res) {
 
 async function deleteUser(req, res) {
 	try {
-        console.log('aAAAAAAAAAAAAAAAA')
 		const user = await UserModel.destroy({
 			where: {
 				id: req.params.id,

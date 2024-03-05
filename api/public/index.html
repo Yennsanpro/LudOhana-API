@@ -5,23 +5,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LudOhana</title>
-    
 </head>
 
 <body>
     <button id="checkout">Pay</button>
 
     <script>
+        const bodyObj = {
+            "name": "Evento Las Palmas",
+            "description": "Evento de dibujo Las Palmas",
+            "amount": 100
+        }
         const button = document.getElementById('checkout')
         button.addEventListener('click', async () => {
-            const res = await fetch ('/checkout', {
-                method: 'POST'
+            const res = await fetch('/api/contribution/checkout', {
+                method: 'POST',
+                body: JSON.stringify(bodyObj),
+                headers: {
+                    'Content-Type': 'application/json',
+                },
             })
-            console.log(res)
 
-            const url = await res.json()
-            console.log(url)
-            window.location.href = url
+            const data = await res.json()
+            window.location.href = data.url
         })
     </script>
 </body>

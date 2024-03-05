@@ -1,8 +1,11 @@
 const Stripe = require('stripe')
 
+
 const stripe = new Stripe(process.env.STRIPE_KEY)
 
+
 const ContributionModel = require('../models/contribution.model.js')
+
 
 const createCheckout = async (req, res) => {
     try {
@@ -12,7 +15,6 @@ const createCheckout = async (req, res) => {
             "description": "Evento de dibujo Telde",
             "amount": 20
         }
-        
         */
         const session = await stripe.checkout.sessions.create({
             line_items: [
@@ -29,25 +31,40 @@ const createCheckout = async (req, res) => {
                 }
             ],
             mode: 'payment',
-            // success_url: `http://localhost:3000/api/contribution/success?amount=${req.body.amount}`,
             success_url: `http://localhost:3000`,
             cancel_url: 'http://localhost:3000'
         })
 
-        return res.status(200).send(session.url)
+        return res.status(200).json(session)
     } catch (error) {
         return res.status(500).send(error.message)
     }
 }
 
 
-const createContribution = async (req, res) => {
+const webhook = async (req, res) => {
+    let event;
+
     try {
-        const test = await stripe.checkout.sessions.list()
-        console.log(test.status)
-        console.log(test.amount_total)
-        console.log(test)
-        //await ContributionModel.create({ "amount": parseInt(req.query.amount)})
+        event = req.body;
+    } catch (err) {
+        return res.status(400).send(`Webhook Error: ${err.message}`);
+    }
+
+    // Verificar si el evento es de tipo "checkout.session.completed"
+    if (event.type === 'checkout.session.completed') {
+        const session = event.data.object;
+
+        await createContribution(req,res,(session.amount_total / 100))
+    }
+
+    res.status(200).end();
+}
+
+
+const createContribution = async (req,res,amount) => {
+    try {
+        await ContributionModel.create({ "amount": parseInt(amount)})
 
         res.status(200).send("Contribution successful")
     } catch (error) {
@@ -55,4 +72,4 @@ const createContribution = async (req, res) => {
     }
 }
 
-module.exports = { stripe, createCheckout, createContribution }
+module.exports = { stripe, createCheckout, webhook, createContribution }

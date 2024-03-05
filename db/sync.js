@@ -1,6 +1,7 @@
 const UserModel = require('../api/models/user.model')
 const EventModel = require('../api/models/event.model')
 const MaterialModel = require('../api/models/material.model.js')
+const ContributionModel = require('../api/models/contribution.model')
 
 
 const dbSync =async() => {
@@ -8,6 +9,7 @@ const dbSync =async() => {
         //await UserModel.sync() 
         //await EventModel.sync()
         //await MaterialModel.sync()
+        await ContributionModel.sync()
     }catch(error){
         throw new Error(error)
     }

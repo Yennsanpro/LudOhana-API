@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "node --watch index.js",
     "start": "node index.js",
+    "slogin": "./stripe login",
+    "swebhook": "./stripe listen --forward-to localhost:3000/api/contribution/webhook",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -19,6 +21,8 @@
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.0",
     "mysql2": "^3.9.2",
-    "sequelize": "^6.37.1"
+    "path": "^0.12.7",
+    "sequelize": "^6.37.1",
+    "stripe": "^14.19.0"
   }
 }

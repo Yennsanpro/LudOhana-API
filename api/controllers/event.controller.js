@@ -65,7 +65,7 @@ const getCurrentsEvents = async (req, res) => {
   }
 };
 
- const getEventsByState = async (req, res) => { // by admin
+const getEventsByState = async (req, res) => { // by admin
   try {
     const events = await EventModel.findAll({
       where: {
@@ -81,22 +81,21 @@ const getCurrentsEvents = async (req, res) => {
     res.status(500).send(`Error finding ${req.params.state} events`);
     throw new Error(error);
   }
-}; 
+};
 
 const getEventByState = async (req, res) => { // by user
   try {
-    const event = await EventModel.findByPk(req.params.eventId);
     const user = await UserModel.findByPk(req.params.userId);
-
-    // if (events.length === 0) {
-    //   return res.status(404).send(`No ${req.params.state} events found`);
-    // }
-    // return res.status(200).json(events);
+    const events = await user.getEvents(({ joinTableAttributes: [] }))
+    if (events.length === 0) {
+       return res.status(404).send(`No events of user found`);
+    }
+    return res.status(200).json(events);
   } catch (error) {
-    res.status(500).send(`Error finding ${req.params.state} events`);
+    res.status(500).send(`Error finding events of user`);
     throw new Error(error);
   }
-}; 
+};
 
 const getEventById = async (req, res) => {
   try {
@@ -114,12 +113,12 @@ const getEventById = async (req, res) => {
 
 const createEvent = async (req, res) => {
   try {
-    if(res.locals.user.role === "admin"){
-        req.body.state = "Aproved"
+    if (res.locals.user.role === "admin") {
+      req.body.state = "Aproved"
     }
-    if(res.locals.user.role === "user"){
+    if (res.locals.user.role === "user") {
       req.body.state = "Propoused"
-  }
+    }
 
     const event = await EventModel.create(req.body);
     res.status(200).json(event);
@@ -167,6 +166,7 @@ const deleteEvent = async (req, res) => {
 module.exports = {
   getAllEventsHandler,
   getEventById,
+  getEventByState,
   createEvent,
   updateEvent,
   deleteEvent,

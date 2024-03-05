@@ -1,5 +1,4 @@
 require('dotenv').config()
-const router = require('./api/routes/index.route')
 const morgan = require('morgan')
 
 const express = require('express')
@@ -8,8 +7,8 @@ const path = require('path')
 
 const sequelize = require('./db')
 
-const {addRelations} = require('./db/relationships')
 const dbSync = require('./db/sync')
+const {addRelations} = require('./db/relationships')
 
 api.use(morgan('dev'))
 api.use(express.json())
@@ -22,8 +21,7 @@ api.use(express.static(path.resolve('api/public')))
 const dbCheck = async() => {
     try {
         await sequelize.authenticate()
-        addRelations() 
-        console.log('aaaaaaaaaaaaaaaaaaaaaaa')
+        addRelations()
         await dbSync()
         console.log('connected to DB')
     }catch (error){

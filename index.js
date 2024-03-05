@@ -10,9 +10,7 @@ const dbSync = require ('./db/sync')
 
 api.use(morgan('dev'))
 api.use(express.json())
-//api.use('/api',router)
 
-api.get('/', (req, res) => res.send('Connected') )
 api.use('/api', require('./api/routes/index.route'))
 
 const dbCheck = async() => {
@@ -25,7 +23,7 @@ const dbCheck = async() => {
     }
 }
 
-api.listen(process.env.PORT, async (err) => { 
+api.listen(process.env.PORT, async (err) => {
     if (err) throw new Error ('Cannot start API')
     await dbCheck()
     console.log('*'.repeat(50))

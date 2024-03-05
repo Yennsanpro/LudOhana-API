@@ -10,10 +10,10 @@ const dbSync = require ('./db/sync')
 
 api.use(morgan('dev'))
 api.use(express.json())
-api.use('/api',router)
+//api.use('/api',router)
 
 api.get('/', (req, res) => res.send('Connected') )
-api.use('/api', require('./api/routes'))
+api.use('/api', require('./api/routes/index.route'))
 
 const dbCheck = async() => {
     try {

@@ -3,10 +3,8 @@ const EventModel = require("../models/event.model");
 const { Op } = require("sequelize");
 
 const getAllEventsHandler = async (req, res) => {
-  console.log(Object.keys(req.query));
   try {
     if (req.query.filter === "previous") {
-      console.log("estoy en get previous " + req.query.filter);
       return getPreviousEvents(req, res);
     } else if (Object.keys(req.query)[0] === "state") {
       return getEventsByState(req, res);
@@ -66,7 +64,7 @@ const getCurrentsEvents = async (req, res) => {
   }
 };
 
-const getEventsByState = async (req, res) => {
+ const getEventsByState = async (req, res) => {
   try {
     const events = await EventModel.findAll({
       where: {
@@ -82,7 +80,7 @@ const getEventsByState = async (req, res) => {
     res.status(500).send(`Error finding ${req.params.state} events`);
     throw new Error(error);
   }
-};
+}; 
 
 const getEventById = async (req, res) => {
   try {
@@ -145,10 +143,7 @@ const deleteEvent = async (req, res) => {
 
 module.exports = {
   getAllEventsHandler,
-  getCurrentsEvents,
-  getEventsByState,
   getEventById,
-  getPreviousEvents,
   createEvent,
   updateEvent,
   deleteEvent,

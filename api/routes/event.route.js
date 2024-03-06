@@ -14,15 +14,13 @@ const {
 } = require("../controllers/event.controller");
 
 router.get("/", getAllEventsHandler);
-router.get("/:eventId/user",checkAuth, getEventByState)
+router.get("/:eventId/user", checkAuth, getEventByState)
 router.get("/user/:userId", checkAuth, getUserEventsHandler)
-router.put("/:eventId/user",checkAuth, registerUserEvent)
-router.put("/:eventId/materials/:materialId",
-//checkAdmin, 
-addMaterialEvent)
+router.put("/:eventId/user", checkAuth, registerUserEvent)
+router.put("/:eventId/materials/:materialId", checkAuth, checkAdmin, addMaterialEvent)
 router.get("/:id", getEventById);
-router.post("/", checkAuth,createEvent);
-router.put("/:id",checkAdmin, updateEvent);
-router.delete("/:id",checkAdmin, deleteEvent);
+router.post("/", checkAuth, createEvent);
+router.put("/:id", checkAuth, checkAdmin, updateEvent);
+router.delete("/:id", checkAuth, checkAdmin, deleteEvent);
 
 module.exports = router;

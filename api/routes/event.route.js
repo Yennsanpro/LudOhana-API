@@ -7,16 +7,18 @@ const {
   getEventByState,
   createEvent,
   registerUserEvent,
+  getUserEventsHandler,
   updateEvent,
   deleteEvent,
 } = require("../controllers/event.controller");
 
 router.get("/", getAllEventsHandler);
-router.get("/:eventId/user/:userId", getEventByState);
+router.get("/:eventId/user/:userId", getEventByState)
+router.get("/user/:userId", checkAuth, getUserEventsHandler)
 router.put("/:eventId/user/:userId", registerUserEvent)
 router.get("/:id", getEventById);
 router.post("/", checkAuth,createEvent);
-router.put("/:id",checkAdmin,updateEvent);
-router.delete("/:id",checkAdmin,deleteEvent);
+router.put("/:id",checkAdmin, updateEvent);
+router.delete("/:id",checkAdmin, deleteEvent);
 
 module.exports = router;

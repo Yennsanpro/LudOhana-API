@@ -128,11 +128,11 @@ const createEvent = async (req, res) => {
 const registerUserEvent = async (req, res) => {
   try {
     const event = await EventModel.findByPk(req.params.eventId)
-    
+
     //We make a native SQL query to update inscribed in events table
     const eventExist = await sequelize.query(`UPDATE events SET inscribed = inscribed + ${req.body.inscribed} where events.id = ${req.params.eventId}`)
-    const changedRows = eventExist[eventExist.length-1].changedRows
-    if (changedRows === 1 ) {
+    const changedRows = eventExist[eventExist.length - 1].changedRows
+    if (changedRows === 1) {
       const user = await UserModel.findByPk(req.params.userId)
       const result = await event.addUser(user)
 
@@ -142,6 +142,69 @@ const registerUserEvent = async (req, res) => {
     }
   } catch (error) {
     res.status(500).send("Error creating event");
+    throw new Error(error);
+  }
+};
+
+const getUserEventsHandler = async (req, res) => {
+  try {
+    if (req.query.filter === "previous") {
+      console.log("Estoy en previous");
+      return getUserEventsPrevious(req, res);
+    } else {
+      console.log("Estoy en CURRENT");
+      return getUserEventsCurrent(req, res);
+    }
+  } catch (error) {
+    res.status(500).send("Error finding events of user");
+    throw new Error(error);
+  }
+};
+
+const getUserEventsCurrent = async (req, res) => {
+  try {
+    const events = await res.locals.user.getEvents(
+      {
+        where: {
+          dateStart: {
+            [Op.gt]: Date.now()
+          }
+        },
+        joinTableAttributes: []
+      })
+
+    if (events.length === 0) {
+      return res.status(404).send("No currents events found");
+    }
+
+    return res.status(200).json(events);
+
+  } catch (error) {
+    res.status(500).send("Error finding events of user");
+    throw new Error(error);
+  }
+};
+
+const getUserEventsPrevious = async (req, res) => {
+  try {
+    const events = await res.locals.user.getEvents(
+      {
+        where: {
+          dateEnd: {
+            [Op.lt]: Date.now()
+          }
+        },
+        joinTableAttributes: []
+      })
+
+    if (events.length === 0) {
+      return res.status(404).send("No previous events found");
+    }
+
+    return res.status(200).json(events);
+
+  } catch (error) {
+    res.status(500).send("Error finding events of user");
     throw new Error(error);
   }
 };
@@ -185,6 +248,7 @@ module.exports = {
   getAllEventsHandler,
   getEventById,
   getEventByState,
+  getUserEventsHandler,
   createEvent,
   registerUserEvent,
   updateEvent,

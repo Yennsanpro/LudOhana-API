@@ -51,7 +51,8 @@ const login = async (req, res) => { // function User can login
 }
 async function getUser(req, res) {
     try {
-        const user = await UserModel.findByPk(req.params.id)
+        // const user = await UserModel.findByPk(req.params.id)
+        const user = await res.locals.user
         if (user) {
             return res.status(200).json(user)
         } else {
@@ -67,7 +68,7 @@ async function updateUser(req, res) {
 		const [userExist, user] = await UserModel.update(req.body, {
 			returning: true,
 			where: {
-				id: req.params.id,
+				id: res.locals.user.id,
 			},
 		})
         if (userExist !== 0) {
@@ -84,7 +85,7 @@ async function deleteUser(req, res) {
 	try {
 		const user = await UserModel.destroy({
 			where: {
-				id: req.params.id,
+				id: res.locals.user.id,
 			},
 		})
 		if (user) {
@@ -96,8 +97,6 @@ async function deleteUser(req, res) {
 		return res.status(500).send(error.message)
 	}
 }
-
-
 
 
 module.exports = {

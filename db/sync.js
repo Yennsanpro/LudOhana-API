@@ -11,7 +11,7 @@ const dbSync =async() => {
         // await EventModel.sync()
         // await MaterialModel.sync()
         // await ContributionModel.sync()
-        await User_EventModel.sync()
+        //await User_EventModel.sync()
 
     }catch(error){
         throw new Error(error)

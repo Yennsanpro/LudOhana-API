@@ -127,16 +127,12 @@ const createEvent = async (req, res) => {
 
 const registerUserEvent = async (req, res) => {
   try {
-    const [eventExist] = await EventModel.update(
-      { inscribed: sequelize.literal(`inscribed + ${req.body.inscribed}`) },
-      {
-      returning: true,
-      where: {
-        id: req.params.eventId,
-      },
-    });
-    if (eventExist !== 0) {
-      const event = await EventModel.findByPk(req.params.eventId)
+    const event = await EventModel.findByPk(req.params.eventId)
+    
+    //We make a native SQL query to update inscribed in events table
+    const eventExist = await sequelize.query(`UPDATE events SET inscribed = inscribed + ${req.body.inscribed} where events.id = ${req.params.eventId}`)
+    const changedRows = eventExist[eventExist.length-1].changedRows
+    if (changedRows === 1 ) {
       const user = await UserModel.findByPk(req.params.userId)
       const result = await event.addUser(user)
 

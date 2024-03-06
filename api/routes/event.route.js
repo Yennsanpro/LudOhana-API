@@ -13,9 +13,9 @@ const {
 } = require("../controllers/event.controller");
 
 router.get("/", getAllEventsHandler);
-router.get("/:eventId/user/:userId", getEventByState)
+router.get("/:eventId/user",checkAuth, getEventByState)
 router.get("/user/:userId", checkAuth, getUserEventsHandler)
-router.put("/:eventId/user/:userId", registerUserEvent)
+router.put("/:eventId/user",checkAuth, registerUserEvent)
 router.get("/:id", getEventById);
 router.post("/", checkAuth,createEvent);
 router.put("/:id",checkAdmin, updateEvent);

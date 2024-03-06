@@ -1,10 +1,14 @@
-const router = require('express').Router()
+const router = require("express").Router();
 
-const { createCheckout, webhook } = require('../controllers/contribution.controller.js')
+const { checkAuth } = require("../middlewares/checkAuth.js");
 
-router.post('/checkout', createCheckout)
+const {
+  createCheckout,
+  webhook,
+} = require("../controllers/contribution.controller.js");
 
-router.post('/webhook', webhook) // Endpoint para recibir notificaciones Webhook de Stripe+
+router.post("/checkout", checkAuth, createCheckout);
 
+router.post("/webhook", checkAuth, webhook); // Endpoint to recieve Webhook notifications from Stripe
 
-module.exports = router
+module.exports = router;

@@ -1,12 +1,15 @@
 const router = require('express').Router()
+const AuthRouter = require('./auth.route')
 const EventRouter = require('./event.route')
-const MaterialsRouter = require('./material.router.js')
+const MaterialRouter = require('./material.router.js')
+const ContributionRouter = require('./contribution.route.js')
+const {checkAdmin} = require('../middlewares/checkAuth.js')
 
 
-router.use('/materials', MaterialsRouter)
+router.use('/auth', AuthRouter)
 router.use('/events',EventRouter)
-router.use('/auth', require('./auth.route'))
-router.use('/contribution', require('./contribution.route.js'))
+router.use('/materials',checkAdmin, MaterialRouter)
+router.use('/contribution', ContributionRouter)
 
 
 module.exports = router

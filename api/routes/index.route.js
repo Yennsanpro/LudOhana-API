@@ -8,7 +8,9 @@ const {checkAdmin} = require('../middlewares/checkAuth.js')
 
 router.use('/auth', AuthRouter)
 router.use('/events',EventRouter)
-router.use('/materials',checkAdmin, MaterialRouter)
+router.use('/materials',
+//checkAdmin, 
+MaterialRouter)
 router.use('/contribution', ContributionRouter)
 
 

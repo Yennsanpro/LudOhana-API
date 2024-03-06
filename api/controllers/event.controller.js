@@ -1,6 +1,8 @@
 const EventModel = require("../models/event.model");
 const sequelize = require("../../db/index.js");
 const { Op } = require("sequelize");
+const MaterialModel = require("../models/material.model.js");
+const Material_EventModel = require("../models/material_event.model.js");
 
 const EVENTS_STATES = {
   propoused: "Propoused",
@@ -270,6 +272,29 @@ const deleteEvent = async (req, res) => {
   }
 };
 
+const addMaterialEvent = async (req, res) => {
+  try {
+    const event = await EventModel.findByPk(req.params.eventId)
+    const material = await MaterialModel.findByPk(req.params.materialId)
+    const result = await event.addMaterial(material)
+    const material_eventExist = await Material_EventModel.update({amountUsed: req.body.amountUsed}, {
+      where: {
+        [Op.and]: [
+          {materialId: req.params.materialId},
+          {eventId: req.params.eventId}
+        ]
+      }
+    })
+    if (material_eventExist !== 0) {
+      return res.status(200).json({ result, amountUsed: req.body.amountUsed})
+    }else{
+      return res.status(404).send('event or material not found')
+    }
+  } catch (error) {
+    return res.status(500).send(error.message)
+  }
+}
+
 module.exports = {
   getAllEventsHandler,
   getEventById,
@@ -280,4 +305,5 @@ module.exports = {
   registerUserEvent,
   updateEvent,
   deleteEvent,
-};
+  addMaterialEvent,
+}

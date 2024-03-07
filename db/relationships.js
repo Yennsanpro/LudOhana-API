@@ -14,6 +14,9 @@ function addRelations() {
         MaterialModel.belongsToMany(EventModel, { through: Material_EventModel })
         EventModel.belongsToMany(MaterialModel, { through: Material_EventModel })
 
+        UserModel.hasMany(ContributionModel)
+        EventModel.hasMany(ContributionModel)
+
         console.log("Relations added")
     } catch (error) {
         throw new Error(error)

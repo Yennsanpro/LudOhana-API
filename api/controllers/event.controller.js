@@ -3,6 +3,8 @@ const sequelize = require("../../db/index.js");
 const { Op } = require("sequelize");
 const MaterialModel = require("../models/material.model.js");
 const Material_EventModel = require("../models/material_event.model.js");
+const UserModel = require("../models/user.model.js");
+const ContributionModel = require("../models/contribution.model.js");
 
 const EVENTS_STATES = {
   propoused: "Propoused",
@@ -276,31 +278,31 @@ const addMaterialEvent = async (req, res) => {
   try {
     const event = await EventModel.findByPk(req.params.eventId)
     const material = await MaterialModel.findByPk(req.params.materialId) //We get a material by id
-    
+
     let material_eventExist, result;
-    
-    if(req.body.amountUsed<= material.amount){
+
+    if (req.body.amountUsed <= material.amount) {
       material.amount -= req.body.amountUsed
-      material.update({amount: material.amount}) //We update material target that we get before
-      
+      material.update({ amount: material.amount }) //We update material target that we get before
+
       result = await event.addMaterial(material) //We asociate a material with an event
 
       //We update amountUsed asociate a material with an event
-      material_eventExist = await Material_EventModel.update({amountUsed: req.body.amountUsed}, {
+      material_eventExist = await Material_EventModel.update({ amountUsed: req.body.amountUsed }, {
         where: {
           [Op.and]: [
-            {materialId: req.params.materialId},
-            {eventId: req.params.eventId}
+            { materialId: req.params.materialId },
+            { eventId: req.params.eventId }
           ]
         }
       })
-    }else{
+    } else {
       return res.status(406).send('material amount is not enough in stock')
     }
 
     if (material_eventExist !== 0) {
-      return res.status(200).json({ result, amountUsed: req.body.amountUsed})
-    }else{
+      return res.status(200).json({ result, amountUsed: req.body.amountUsed })
+    } else {
       return res.status(404).send('event or material not found')
     }
   } catch (error) {
@@ -311,16 +313,58 @@ const addMaterialEvent = async (req, res) => {
 const getMaterialsEvent = async (req, res) => {
   try {
     const event = await EventModel.findByPk(req.params.eventId)
-    const materials =  await event.getMaterials({joinTableAttributes: []})
-      if(materials !== 0){
-        return res.status(200).json({message: "Materials belongs to event", materials: materials})
-      }else{
-        return res.status(404).send('Materials not found in this event')
-      }
+    const materials = await event.getMaterials({ joinTableAttributes: [] })
+    if (materials !== 0) {
+      return res.status(200).json({ message: "Materials belongs to event", materials: materials })
+    } else {
+      return res.status(404).send('Materials not found in this event')
+    }
   } catch (error) {
     return res.status(500).send(error.message)
   }
 }
+
+const getEventUserContributions = async (req, res) => {
+  try {
+    const contributions = await ContributionModel.findAll(
+      {
+        where: {
+          [Op.and]: [
+            { userId: res.locals.user.id },
+            { eventId: req.params.eventId }
+          ]
+        }
+      })
+
+    if (contributions !== 0) {
+      return res.status(200).json({ message: "Contributions belongs to user in this event", contributions: contributions })
+    } else {
+      return res.status(404).send('Materials not found in this event')
+    }
+  } catch (error) {
+    return res.status(500).send(error.message)
+  }
+}
+
+const getEventContributions = async (req, res) => {
+  try {
+    const contributions = await ContributionModel.findAll(
+      {
+        where: {
+          eventId: req.params.eventId
+        }
+      })
+
+    if (contributions !== 0) {
+      return res.status(200).json({ message: "Contributions belongs to user in this event", contributions: contributions })
+    } else {
+      return res.status(404).send('Materials not found in this event')
+    }
+  } catch (error) {
+    return res.status(500).send(error.message)
+  }
+}
+
 
 module.exports = {
   getAllEventsHandler,
@@ -334,4 +378,6 @@ module.exports = {
   deleteEvent,
   addMaterialEvent,
   getMaterialsEvent,
+  getEventUserContributions,
+  getEventContributions
 }

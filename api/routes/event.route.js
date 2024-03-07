@@ -12,6 +12,8 @@ const {
   deleteEvent,
   addMaterialEvent,
   getMaterialsEvent,
+  getEventUserContributions,
+  getEventContributions,
 } = require("../controllers/event.controller");
 
 router.get("/", getAllEventsHandler);
@@ -19,6 +21,8 @@ router.get("/:eventId/user", checkAuth, getEventByState)
 router.get("/user/:userId", checkAuth, getUserEventsHandler)
 router.get("/:id", getEventById);
 router.get("/:eventId/materials", checkAuth, checkAdmin, getMaterialsEvent)
+router.get("/:eventId/user/:userId/contributions", checkAuth, getEventUserContributions)
+router.get("/:eventId/contributions", checkAuth, checkAdmin, getEventContributions)
 router.post("/", checkAuth, createEvent);
 router.put("/:eventId/user", checkAuth, registerUserEvent)
 router.put("/:eventId/materials/:materialId", checkAuth, checkAdmin, addMaterialEvent)

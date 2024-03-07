@@ -163,9 +163,22 @@ const registerUserEvent = async (req, res) => {
     const event = await EventModel.findByPk(req.params.eventId);
 
     //We make a native SQL query to update inscribed in events table
-    const eventExist = await sequelize.query(
-      `UPDATE events SET inscribed = inscribed + ${req.body.inscribed} where events.id = ${req.params.eventId}`
-    );
+    let eventExist;
+    if ((event.inscribed + req.body.inscribed)<=event.participants) {
+
+      if (event.inscribed > 0) {
+        eventExist = await sequelize.query(
+          `UPDATE events SET inscribed = inscribed + ${req.body.inscribed} where id = ${req.params.eventId}`
+        );
+      } else {
+        eventExist = await sequelize.query(
+          `UPDATE events SET inscribed = ${req.body.inscribed} where id = ${req.params.eventId}`
+        );
+      }
+    }else{
+      return res.status(406).send("Event can't allow more inscribeds");
+    }
+
     const changedRows = eventExist[eventExist.length - 1].changedRows;
     if (changedRows === 1) {
       const user = await res.locals.user
@@ -180,6 +193,21 @@ const registerUserEvent = async (req, res) => {
     throw new Error(error);
   }
 };
+
+const deleteEventUser = async (req, res) => {
+  try {
+    const event = await EventModel.findByPk(req.params.eventId);
+    const user = await res.locals.user
+    const result = await event.removeUser(user);
+    if (result) {
+      return res.status(200).json("User deleted from Event");
+    } else {
+      return res.status(404).send("Event not found");
+    }
+  } catch (error) {
+    return res.status(500).send(error.message)
+  }
+}
 
 const getUserEventsHandler = async (req, res) => {
   try {
@@ -248,9 +276,9 @@ const updateEvent = async (req, res) => {
       },
     });
     if (eventExist !== 0) {
-      return res.status(200).json({ message: "event updated", event: event });
+      return res.status(200).json({ message: "Event updated", event: event });
     } else {
-      return res.status(404).send("event not found");
+      return res.status(404).send("Event not found");
     }
   } catch (error) {
     return res.status(500).send(error.message);
@@ -297,13 +325,13 @@ const addMaterialEvent = async (req, res) => {
         }
       })
     } else {
-      return res.status(406).send('material amount is not enough in stock')
+      return res.status(406).send('Material amount is not enough in stock')
     }
 
     if (material_eventExist !== 0) {
       return res.status(200).json({ result, amountUsed: req.body.amountUsed })
     } else {
-      return res.status(404).send('event or material not found')
+      return res.status(404).send('Event or material not found')
     }
   } catch (error) {
     return res.status(500).send(error.message)
@@ -366,6 +394,8 @@ const getEventContributions = async (req, res) => {
 }
 
 
+
+
 module.exports = {
   getAllEventsHandler,
   getEventById,
@@ -374,6 +404,7 @@ module.exports = {
   getUserProposedEvents,
   createEvent,
   registerUserEvent,
+  deleteEventUser,
   updateEvent,
   deleteEvent,
   addMaterialEvent,

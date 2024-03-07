@@ -275,21 +275,48 @@ const deleteEvent = async (req, res) => {
 const addMaterialEvent = async (req, res) => {
   try {
     const event = await EventModel.findByPk(req.params.eventId)
-    const material = await MaterialModel.findByPk(req.params.materialId)
-    const result = await event.addMaterial(material)
-    const material_eventExist = await Material_EventModel.update({amountUsed: req.body.amountUsed}, {
-      where: {
-        [Op.and]: [
-          {materialId: req.params.materialId},
-          {eventId: req.params.eventId}
-        ]
-      }
-    })
+    const material = await MaterialModel.findByPk(req.params.materialId) //We get a material by id
+    
+    let material_eventExist, result;
+    
+    if(req.body.amountUsed<= material.amount){
+      material.amount -= req.body.amountUsed
+      material.update({amount: material.amount}) //We update material target that we get before
+      
+      result = await event.addMaterial(material) //We asociate a material with an event
+
+      //We update amountUsed asociate a material with an event
+      material_eventExist = await Material_EventModel.update({amountUsed: req.body.amountUsed}, {
+        where: {
+          [Op.and]: [
+            {materialId: req.params.materialId},
+            {eventId: req.params.eventId}
+          ]
+        }
+      })
+    }else{
+      return res.status(406).send('material amount is not enough in stock')
+    }
+
     if (material_eventExist !== 0) {
       return res.status(200).json({ result, amountUsed: req.body.amountUsed})
     }else{
       return res.status(404).send('event or material not found')
     }
+  } catch (error) {
+    return res.status(500).send(error.message)
+  }
+}
+
+const getMaterialsEvent = async (req, res) => {
+  try {
+    const event = await EventModel.findByPk(req.params.eventId)
+    const materials =  await event.getMaterials({joinTableAttributes: []})
+      if(materials !== 0){
+        return res.status(200).json({message: "Materials belongs to event", materials: materials})
+      }else{
+        return res.status(404).send('Materials not found in this event')
+      }
   } catch (error) {
     return res.status(500).send(error.message)
   }
@@ -306,4 +333,5 @@ module.exports = {
   updateEvent,
   deleteEvent,
   addMaterialEvent,
+  getMaterialsEvent,
 }

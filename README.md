@@ -6,8 +6,8 @@ Discover LudOhana, the non-profit association that unites fun and learning in th
 
 ## Authors
 
-+ [Juan Diego Fernández Déniz](https://github.com/judifede)
 + [Yennyth Renne Sánchez Nieto](https://github.com/Yennsanpro)
++ [Juan Diego Fernández Déniz](https://github.com/judifede)
 + [Daniela Romero García](https://github.com/bqcount)
 
 ## Technologies
@@ -69,10 +69,10 @@ To start the api server just run:
 
 | METHOD | ENDPOINT                        | TOKEN | ROLE          | DESCRIPTION                | POST PARAMS              | RETURNS                               |
 | ------ | ------------------------------- | ----- | ------------- | -------------------------- | ------------------------ | ------------------------------------- |
-| GET    | {{baseURL}}/auth/:userId        | YES   | User          | Get user by id             | -                        | [{ users }]                           |
+| GET    | {{baseURL}}/auth/:userId        | YES   | User          | Get user by id             | -                        | { user }                              |
 | POST   | {{baseURL}}/auth/signup         | NO    | User          | Create one user            | req.body                 | { token, message: "Account created" } |
 | POST   | {{baseURL}}/auth/login          | NO    | User          | Sign in                    | req.body                 | { token }                             |
-| PUT    | {{baseURL}}/auth/:userId        | YES   | User          | Update user                | req.body,req.params      | { users }                             |
+| PUT    | {{baseURL}}/auth/:userId        | YES   | User          | Update one user            | req.body, req.params     | { message: "User updated", user }     |
 | DELETE | {{baseURL}}/auth/:userId        | YES   | User          | Remove one user            | userId                   | "User deleted"                        |
 
 
@@ -81,14 +81,16 @@ To start the api server just run:
 | METHOD | ENDPOINT                                       | TOKEN | ROLE          | DESCRIPTION                         | POST PARAMS              | RETURNS                  
 | ------ | ---------------------------------------------- | ----- | ------------- | ----------------------------------- | ------------------------ | -------------------|
 | GET    | {{baseURL}}/events                             | NO    | Public        | Get currents events                 | req.query                | [{ events }]       |     
-| GET    | {{baseURL}}/events?filter=previous             | NO    | Public        | Get previous events                 | req.params               | [{ events }]       |     
+| GET    | {{baseURL}}/events?filter=previous             | NO    | Public        | Get previous events                 | req.query                | [{ events }]       |     
+| GET    | {{baseURL}}/events?state=Propoused             | NO    | Public        | Get events by state                 | req.query                | [{ events }]       |  
 | GET    | {{baseURL}}/events/user/:userId                | YES   | User          | Get registered events from the user | req.params,req.query     | [{ events }]       |     
 | GET    | {{baseURL}}/events/user/:userId?filter=previous| YES   | User          | Get past user events                | req.params               | [{ events }]       |     
 | GET    | {{baseURL}}/events/:eventId/user/:userId       | YES   | User          | Get user events propoused           | req.params               | [{ events }]       |      
-| GET    | {{baseURL}}/events/:eventState                 | YES   | Admin         | Get user events by state            | req.params               | [{ events }]       |  
-| POST   | {{baseURL}}/events                             | YES   | Admin/User    | Create events                       | req.body                 | { events }         |   
-| PUT    | {{baseURL}}/events/:eventId/user/:userId       | YES   | User          | Registers to an evento              | req.params,req.body      | { events }         |    
-| PUT    | {{baseURL}}/events/:eventId                    | YES   | Admin         | Update evento                       | req.params,req.body      | { events }         |     
+| GET    | {{baseURL}}/events/:eventState                 | YES   | Admin         | Get user events by state            | req.params               | [{ events }]       |
+| GET    | {{baseURL}}/events/:eventId                    | NO    | Public        | Get one event                       | req.params               | { event }          |   
+| POST   | {{baseURL}}/events                             | YES   | Admin/User    | Create one event                    | req.body                 | { events }         |   
+| PUT    | {{baseURL}}/events/:eventId/user/:userId       | YES   | User          | Registers to an event               | req.params,req.body      | { events }         |    
+| PUT    | {{baseURL}}/events/:eventId                    | YES   | Admin         | Update one event                    | req.params,req.body      | { event }          |     
 | DELETE | {{baseURL}}/events/:eventId                    | YES   | Admin         | Remove one event                    | eventId                  | "Event deleted"    |      
 
 
@@ -109,13 +111,13 @@ To start the api server just run:
 
 ### Materials
       
-| METHOD | ENDPOINT                                                | TOKEN | ROLE          | DESCRIPTION                | POST PARAMS              | RETURNS                  |
-| ------ | ------------------------------------------------------  | ----- | ------------- | -------------------------- | ------------------------ | ------------------------ |
-| GET    | {{baseURL}}/materials                                   | YES   | Admin         | Get materials              | -                        | [{ materials }]      |
-| GET    | {{baseURL}}materials/:materialId                        | YES   | Admin         | Get materials by id        | req.params               | { materials }        |       
-| GET    | {{baseURL}}events/:eventId/materials/:materialId        | YES   | Admin         | Get materials by eventId   | req.params               | { materials }        |       
-| POST   | {{baseURL}}/materials                                   | YES   | Admin         | Create material            | req.body                 | { materials }        |
-| PUT    | {{baseURL}}/materials/:materialId                       | YES   | Admin         | Update material by id      | req.body,req.params      | { materials}         |
-| PUT    | {{baseURL}}/events/:eventId/materials/:materialId       | YES   | Admin         | Update material by eventId | req.body,req.params      | { materials}         |
-| DELETE | {{baseURL}}/materials/:materialId                       | YES   | Admin         | Remove one material        | materialId               | "Material deleted"   |
+| METHOD | ENDPOINT                                                | TOKEN | ROLE          | DESCRIPTION                      | POST PARAMS              | RETURNS              |
+| ------ | ------------------------------------------------------  | ----- | ------------- | -------------------------------- | ------------------------ | -------------------- |
+| GET    | {{baseURL}}/materials                                   | YES   | Admin         | Get materials                    | -                        | [{ materials }]      |
+| GET    | {{baseURL}}materials/:materialId                        | YES   | Admin         | Get one material by id           | req.params               | { material }         |       
+| GET    | {{baseURL}}events/:eventId/materials                    | YES   | Admin         | Get materials of one event       | req.params               | [{ materials }]      |       
+| POST   | {{baseURL}}/materials                                   | YES   | Admin         | Create one material              | req.body                 | { material }         |
+| PUT    | {{baseURL}}/materials/:materialId                       | YES   | Admin         | Update one material by id        | req.body,req.params      | { material }         |
+| PUT    | {{baseURL}}/events/:eventId/materials/:materialId       | YES   | Admin         | Update one material of one event | req.body,req.params      | { material }         |
+| DELETE | {{baseURL}}/materials/:materialId                       | YES   | Admin         | Remove one material              | materialId               | "Material deleted"   |
 

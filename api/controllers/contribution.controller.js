@@ -13,6 +13,7 @@ const createCheckout = async (req, res) => {
             "amount": 20
         }
         */
+        const baseUrl = req.protocol + '://' + req.get('host')
         const session = await stripe.checkout.sessions.create({
             line_items: [
                 {
@@ -28,8 +29,8 @@ const createCheckout = async (req, res) => {
                 }
             ],
             mode: 'payment',
-            success_url: `http://localhost:3000`,
-            cancel_url: 'http://localhost:3000'
+            success_url: baseUrl,
+            cancel_url: baseUrl
         })
 
         return res.status(200).json(session)

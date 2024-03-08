@@ -13,7 +13,7 @@ const dbSync =async() => {
         //await MaterialModel.sync()
         //await ContributionModel.sync()
         //await User_EventModel.sync()
-        //await Material_EventModel.sync({alter:true})
+        //await Material_EventModel.sync()
 
     }catch(error){
         throw new Error(error)

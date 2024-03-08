@@ -173,34 +173,20 @@ const registerUserEvent = async (req, res) => {
       return prev + curr.inscribed
     }, 0)
 
-    //We make a native SQL query to update inscribed in events table
-    let eventExist;
-     if ((totalCurrInscribed + req.body.inscribed) <= eventUsers.dataValues.participants) {
-       if (totalCurrInscribed > 0) {
-        console.log("AAAAAAAAAAAAAA")
-        eventExist = await sequelize.query(
-          `UPDATE user_events SET inscribed = inscribed + ${req.body.inscribed}
-          where eventid = ${req.params.eventId} and userid = ${res.locals.user.id}`
-          //FIXME CAMBIAR A INSERT
-        );
-      } else {
-        eventExist = await sequelize.query(
-          `UPDATE user_events SET inscribed = ${req.body.inscribed}
-          where eventid = ${req.params.eventId} and userid = ${res.locals.user.id}`
-        );
-      }
+    //We make a native SQL query to update inscribed in user_events table
+    if ((totalCurrInscribed + req.body.inscribed) <= eventUsers.dataValues.participants) {
+      const result = await event.addUser(res.locals.user);
+
+      await sequelize.query(
+        `UPDATE user_events SET inscribed = ${req.body.inscribed}
+        where eventid = ${req.params.eventId} and userid = ${res.locals.user.id}`
+      );
+
+      return res.status(200).json(result);
     } else {
       return res.status(406).send("Event can't allow more inscribeds");
     }
 
-    const changedRows = eventExist[eventExist.length - 1].changedRows;
-    if (changedRows === 1) {
-      const result = await event.addUser(res.locals.user);
-
-      return res.status(200).json(result);
-    } else {
-      return res.status(404).send("event not found");
-    } 
   } catch (error) {
     res.status(500).send("Error inscribing on event");
     throw new Error(error);

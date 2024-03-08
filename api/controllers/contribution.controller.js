@@ -1,11 +1,8 @@
 const Stripe = require('stripe')
 
-
 const stripe = new Stripe(process.env.STRIPE_KEY)
 
-
 const ContributionModel = require('../models/contribution.model.js')
-
 
 const createCheckout = async (req, res) => {
     try {
@@ -41,7 +38,6 @@ const createCheckout = async (req, res) => {
     }
 }
 
-
 const webhook = async (req, res) => {
     let event;
 
@@ -51,7 +47,7 @@ const webhook = async (req, res) => {
         return res.status(400).send(`Webhook Error: ${err.message}`);
     }
 
-    // Verificar si el evento es de tipo "checkout.session.completed"
+    //Check if event has "checkout.session.completed" type
     if (event.type === 'checkout.session.completed') {
         const session = event.data.object;
 
@@ -60,7 +56,6 @@ const webhook = async (req, res) => {
 
     res.status(200).end();
 }
-
 
 const createContribution = async (req,res,amount) => {
     try {

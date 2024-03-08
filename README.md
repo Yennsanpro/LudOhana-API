@@ -6,17 +6,17 @@ Discover LudOhana, the non-profit association that unites fun and learning in th
 
 ## Authors
 
-+ ![Juan Diego Fernández Déniz](https://github.com/judifede)
-+ ![Yennyth Renne Sánchez Nieto](https://github.com/Yennsanpro)
-+ ![Daniela Romero García](https://github.com/bqcount)
++ [Juan Diego Fernández Déniz](https://github.com/judifede)
++ [Yennyth Renne Sánchez Nieto](https://github.com/Yennsanpro)
++ [Daniela Romero García](https://github.com/bqcount)
 
 ## Technologies
-+ <img style = "vertical-align: cent" src = "https://img.shields.io/badge/Node.js-8CC84B?style=for-the-badge&logo=node.js&logoColor=white" height =  "30" width = "120"> **Node.js**
-+ <img style = "vertical-align: cent" src = "https://img.shields.io/badge/Express-000000?style=for-the-badge&logo=express&logoColor=white" height =  "30" width = "120"> **Express**
-+ <img style = "vertical-align: cent" src = "https://img.shields.io/badge/Sequelize-52B0E7?style=for-the-badge&logo=sequelize&logoColor=white" height =  "30" width = "120"> **Sequelize**
-+ <img style = "vertical-align: cent" src = "https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white" height =  "30" width = "120">  **MySQL**
-+ <img style = "vertical-align: cent" src = "https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" height =  "30" width = "120"> **JavaScript (JS)**
-+ <img style = "vertical-align: cent" src = "https://github.com/Yennsanpro/LudOhana/assets/79409049/99eca35b-2acd-41d0-be38-a42bb53f911c" height =  "30" width = "120"> **Stripe**
++ <img src = "https://img.shields.io/badge/Node.js-8CC84B?style=for-the-badge&logo=node.js&logoColor=white" width = "120"> <span>**Node.js**</span>
++ <img src = "https://img.shields.io/badge/Express-000000?style=for-the-badge&logo=express&logoColor=white" width = "120"> <span>**Express**</span>
++ <img src = "https://img.shields.io/badge/Sequelize-52B0E7?style=for-the-badge&logo=sequelize&logoColor=white" width = "120"> <span>**Sequelize**</span>
++ <img src = "https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white" width = "120"> <span>**MySQL**</span>
++ <img src = "https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" width = "120"> <span>**JavaScript (JS)**</span>
++ <img src = "https://github.com/Yennsanpro/LudOhana/assets/79409049/99eca35b-2acd-41d0-be38-a42bb53f911c" width = "120"> <span>**Stripe**</span>
 
 
 ## Authorization
@@ -27,7 +27,7 @@ Discover LudOhana, the non-profit association that unites fun and learning in th
 ## Requeriments
 
 - Nodejs
-- Database(Change .env-> Dialect with the one you use)
+- Database (Change .env -> Dialect with the one you use)
 
 ## Installation
 
@@ -37,7 +37,11 @@ To get started with the School Administration API, just get into the repo and ru
 
 ## Usage
 
-Create .env file to your own settings. To start the api server just run:
+Create .env file to your own settings.
+
+**Check our .env.example**
+
+To start the api server just run:
 
 ``` node index.js```
 
@@ -63,13 +67,13 @@ Create .env file to your own settings. To start the api server just run:
 {{baseURL}} = http://localhost:port/api
 ### Users
 
-| METHOD | ENDPOINT                        | TOKEN | ROLE          | DESCRIPTION                | POST PARAMS              | RETURNS                  |
-| ------ | ------------------------------- | ----- | ------------- | -------------------------- | ------------------------ | ------------------------ |
-| GET    | {{baseURL}}/users/:userId       | YES   | User          | Get user by id             | -                        | [{ users }]              |
-| POST   | {{baseURL}}/users/signup        | NO    | User          | Create one user            | req.body                 | { users }                |
-| POST   | {{baseURL}}/users/login         | NO    | User          | Sign in                    | req.body                 | { users }                |
-| PUT    | {{baseURL}}/users/:userId       | YES   | User          | Update user                | req.body,req.params      | { users }                |
-| DELETE | {{baseURL}}/users/:userId       | YES   | User          | Remove one user            | userId                   | "User deleted"           |
+| METHOD | ENDPOINT                        | TOKEN | ROLE          | DESCRIPTION                | POST PARAMS              | RETURNS                               |
+| ------ | ------------------------------- | ----- | ------------- | -------------------------- | ------------------------ | ------------------------------------- |
+| GET    | {{baseURL}}/auth/:userId        | YES   | User          | Get user by id             | -                        | [{ users }]                           |
+| POST   | {{baseURL}}/auth/signup         | NO    | User          | Create one user            | req.body                 | { token, message: "Account created" } |
+| POST   | {{baseURL}}/auth/login          | NO    | User          | Sign in                    | req.body                 | { token }                             |
+| PUT    | {{baseURL}}/auth/:userId        | YES   | User          | Update user                | req.body,req.params      | { users }                             |
+| DELETE | {{baseURL}}/auth/:userId        | YES   | User          | Remove one user            | userId                   | "User deleted"                        |
 
 
 ### Events
@@ -92,11 +96,16 @@ Create .env file to your own settings. To start the api server just run:
       
 | METHOD | ENDPOINT                                                | TOKEN | ROLE          | DESCRIPTION                  | POST PARAMS              | RETURNS                  |
 | ------ | ------------------------------------------------------  | ----- | ------------- | ---------------------------- | ------------------------ | ------------------------ |
-| GET    | {{baseURL}}/contributions                               | YES   | Admin         | Get contribtions             | -                        | [{ contributions }]      |
+| POST   | {{baseURL}}/contribution/checkout                       | YES   | User          | Show Stripe checkout         | req.body                 | [{ session }]            |
+| POST   | {{baseURL}}/contribution/webhook                        | YES   | User          | Events from Stripe           | webhook                  | -           |
+<!--
+| GET    | {{baseURL}}/contributions                               | YES   | Admin         | Get contributions            | -                        | [{ contributions }]      |
 | GET    | {{baseURL}}/contributions/:contributionId/event/:eventId| YES   | User/Admin    | Get contributions by eventId | req.params               | { contributions }        |       
-| POST   | {{baseURL}}/contributions                               | YES   | User          | make a contribution          | req.body                 | { contributions }        |
-| PUT    | {{baseURL}}/contributions/idContribution                | YES   | User          | Update contribution          | req.body,req.params      | { contributions}         |
+| POST   | {{baseURL}}/contributions                               | YES   | User          | Make a contribution          | req.body                 | { contributions }        |
+| PUT    | {{baseURL}}/contributions/:contributionId               | YES   | User          | Update contribution          | req.body,req.params      | { contributions}         |
 | DELETE | {{baseURL}}/contributions/:contributionId               | YES   | Admin         | Remove one contrbution       | contributionId           | "Contribution deleted"   |
+-->
+
 
 ### Materials
       
@@ -109,5 +118,4 @@ Create .env file to your own settings. To start the api server just run:
 | PUT    | {{baseURL}}/materials/:materialId                       | YES   | Admin         | Update material by id      | req.body,req.params      | { materials}         |
 | PUT    | {{baseURL}}/events/:eventId/materials/:materialId       | YES   | Admin         | Update material by eventId | req.body,req.params      | { materials}         |
 | DELETE | {{baseURL}}/materials/:materialId                       | YES   | Admin         | Remove one material        | materialId               | "Material deleted"   |
-
 

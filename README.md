@@ -43,8 +43,7 @@ Create .env file to your own settings. To start the api server just run:
 
 ## Data structure and models
 
-![Data structure model](https://github.com/Yennsanpro/LudOhana/assets/79409049/badd9666-305a-4885-9eb9-510a57fd53cc)
-
+![Data structure model](https://github.com/Yennsanpro/LudOhana/assets/79409049/03794f5e-5251-40ba-bacd-35034a5b301e)
 
 ### Relations
 

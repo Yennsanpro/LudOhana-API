@@ -85,14 +85,6 @@ const getCurrentsEvents = async (req, res) => {
   }
 };
 
-const getUserProposedEvents = async (req, res) => {
-  try {
-
-  } catch (error) {
-
-  }
-};
-
 const getEventsByState = async (req, res) => {
   // by admin
   try {

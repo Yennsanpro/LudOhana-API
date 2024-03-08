@@ -160,36 +160,49 @@ const createEvent = async (req, res) => {
 
 const registerUserEvent = async (req, res) => {
   try {
-    const event = await EventModel.findByPk(req.params.eventId);
+    const event = await EventModel.findByPk(req.params.eventId)
+    const eventUsers = await EventModel.findByPk(req.params.eventId, {
+      include: {
+        model: UserModel
+      }
+    })
+
+    //We get all inscribed in target event
+    const allObj = eventUsers.users.map(obj => obj.dataValues.user_event.dataValues);
+    const totalCurrInscribed = allObj.reduce((prev, curr) => {
+      return prev + curr.inscribed
+    }, 0)
 
     //We make a native SQL query to update inscribed in events table
     let eventExist;
-    if ((event.inscribed + req.body.inscribed)<=event.participants) {
-
-      if (event.inscribed > 0) {
+     if ((totalCurrInscribed + req.body.inscribed) <= eventUsers.dataValues.participants) {
+       if (totalCurrInscribed > 0) {
+        console.log("AAAAAAAAAAAAAA")
         eventExist = await sequelize.query(
-          `UPDATE events SET inscribed = inscribed + ${req.body.inscribed} where id = ${req.params.eventId}`
+          `UPDATE user_events SET inscribed = inscribed + ${req.body.inscribed}
+          where eventid = ${req.params.eventId} and userid = ${res.locals.user.id}`
+          //FIXME CAMBIAR A INSERT
         );
       } else {
         eventExist = await sequelize.query(
-          `UPDATE events SET inscribed = ${req.body.inscribed} where id = ${req.params.eventId}`
+          `UPDATE user_events SET inscribed = ${req.body.inscribed}
+          where eventid = ${req.params.eventId} and userid = ${res.locals.user.id}`
         );
       }
-    }else{
+    } else {
       return res.status(406).send("Event can't allow more inscribeds");
     }
 
     const changedRows = eventExist[eventExist.length - 1].changedRows;
     if (changedRows === 1) {
-      const user = await res.locals.user
-      const result = await event.addUser(user);
+      const result = await event.addUser(res.locals.user);
 
       return res.status(200).json(result);
     } else {
       return res.status(404).send("event not found");
-    }
+    } 
   } catch (error) {
-    res.status(500).send("Error creating event");
+    res.status(500).send("Error inscribing on event");
     throw new Error(error);
   }
 };

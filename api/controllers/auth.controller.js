@@ -38,7 +38,7 @@ const login = async (req, res) => {
 
     if (!user) return res.status(500).send("Email password incorrect");
     if (!bcrypt.compareSync(req.body.password, user.password))
-      return res.status(500).send("Email password incorrect");
+      return res.status(500).send("Password incorrect");
 
     const token = jwt.sign(
       //Token created
@@ -49,7 +49,7 @@ const login = async (req, res) => {
     return res.status(200).json({ token: token });
   } catch (error) {
     console.log(error);
-    res.satatus(500).send("Error login.up");
+    res.status(500).send("Error login up");
   }
 };
 async function getUser(req, res) {

@@ -39,27 +39,24 @@ const createCheckout = async (req, res) => {
 }
 
 const webhook = async (req, res) => {
-    let event;
-
     try {
-        event = req.body;
+        let event = req.body;
+        //Check if event has "checkout.session.completed" type
+        if (event.type === 'checkout.session.completed') {
+            const session = event.data.object;
+            await createContribution(req, res, (session.amount_total / 100))
+        }
+
+        res.status(200).end();
     } catch (err) {
         return res.status(400).send(`Webhook Error: ${err.message}`);
     }
 
-    //Check if event has "checkout.session.completed" type
-    if (event.type === 'checkout.session.completed') {
-        const session = event.data.object;
-
-        await createContribution(req,res,(session.amount_total / 100))
-    }
-
-    res.status(200).end();
 }
 
-const createContribution = async (req,res,amount) => {
+const createContribution = async (req, res, amount) => {
     try {
-        await ContributionModel.create({ "amount": parseInt(amount)})
+        await ContributionModel.create({ "amount": parseInt(amount) })
 
         res.status(200).send("Contribution successful")
     } catch (error) {

@@ -10,20 +10,51 @@
 <body>
     <button id="checkout">Pay</button>
 
+    <form>
+        <input type="text" name="user" id="user" placeholder="diego_casa@gmail.com">
+        <input type="password" name="password" id="password" placeholder="daniela">
+        <button type="button">Enviar</button>
+    </form>
+
     <script>
-        const bodyObj = {
-            "name": "Evento Las Palmas",
-            "description": "Evento de dibujo Las Palmas",
-            "amount": 100
-        }
-        const button = document.getElementById('checkout')
-        button.addEventListener('click', async () => {
-            const res = await fetch('/api/contribution/checkout', {
+
+        const formUser = document.querySelector('form input[type="text"]');
+        const formPass = document.querySelector('form input[type="password"]');
+        const formButton = document.querySelector('form button');
+
+        formButton.addEventListener('click', async function (event) {
+            const bodyObj = {
+                "email": formUser.value,
+                "password": formPass.value
+            }
+
+            const res = await fetch('/api/auth/login', {
                 method: 'POST',
-                body: JSON.stringify(bodyObj),
                 headers: {
                     'Content-Type': 'application/json',
                 },
+                body: JSON.stringify(bodyObj),
+            })
+
+            const data = await res.json()
+            const userToken = { Authorization: data.token };
+            localStorage.setItem("user", JSON.stringify(userToken));
+        });
+
+        const checkout = document.getElementById('checkout')
+        checkout.addEventListener('click', async () => {
+            const bodyObj = {
+                "name": "Evento Las Palmas",
+                "description": "Evento de dibujo Las Palmas",
+                "amount": 100
+            }
+            const res = await fetch('/api/contribution/checkout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': JSON.parse(localStorage.getItem("user")).Authorization
+                },
+                body: JSON.stringify(bodyObj),
             })
 
             const data = await res.json()

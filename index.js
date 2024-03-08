@@ -8,10 +8,10 @@ const path = require('path')
 const sequelize = require('./db')
 
 const dbSync = require('./db/sync')
-const {addRelations} = require('./db/relationships')
-
+const { addRelations } = require('./db/relationships')
 api.use(morgan('dev'))
 api.use(express.json())
+api.disable('x-powered-by');
 
 api.use('/api', require('./api/routes/index.route'))
 

@@ -1,6 +1,6 @@
 const router = require("express").Router();
 
-const { checkAuth, checkAdmin } = require("../middlewares/checkAuth.js");
+const { checkAuth } = require("../middlewares/checkAuth.js");
 
 const {
   createCheckout,

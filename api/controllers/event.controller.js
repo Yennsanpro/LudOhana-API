@@ -41,6 +41,7 @@ const getAllEventsHandler = async (req, res) => {
   }
 };
 
+
 const getPreviousEvents = async (req, res) => {
   const actualTime = Date.now();
 
@@ -90,7 +91,7 @@ const getEventsByState = async (req, res) => {
   try {
     const events = await EventModel.findAll({
       where: {
-        state: req.query.state,
+        state: req.query.state
       },
     });
 
@@ -108,7 +109,11 @@ const getEventByState = async (req, res) => {
   // by user
   try {
     const user = await res.locals.user;
-    const events = await user.getEvents({ joinTableAttributes: [] });
+    const events = await user.getEvents({
+       where:{
+        state: (req.query.state).toLowerCase()
+      } 
+    , joinTableAttributes: [] });
     if (events.length === 0) {
       return res.status(404).send(`No events of user found`);
     }
@@ -205,6 +210,7 @@ const getUserEventsHandler = async (req, res) => {
     if (req.query.filter === EVENTS_DATES.previous) {
       return getUserEventsPrevious(req, res);
     } else if (req.query.state === EVENTS_STATES.propoused) {
+      return getEventByState(req,res)
     } else {
       return getUserEventsCurrent(req, res);
     }
@@ -392,7 +398,6 @@ module.exports = {
   getEventById,
   getEventByState,
   getUserEventsHandler,
-  getUserProposedEvents,
   createEvent,
   registerUserEvent,
   deleteEventUser,

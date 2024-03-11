@@ -27,7 +27,7 @@ const checkAuth = (req, res, next) => { // Just for login without autentication
 
 const checkAdmin = (req, res, next) => {
     if(res.locals.user.role!=='admin') {
-       return res.status(401).send('User not authotized')
+       return res.status(401).send('User not authorized')
     }else{
         next()
     }

@@ -19,7 +19,7 @@ const {
 
 router.get("/", getAllEventsHandler);
 router.get("/:eventId/user", checkAuth, getEventByState)
-router.get("/user/:userId", checkAuth, getUserEventsHandler)
+router.get("/user", checkAuth, getUserEventsHandler)
 router.get("/:id", getEventById);
 router.get("/:eventId/materials", checkAuth, checkAdmin, getMaterialsEvent)
 router.get("/:eventId/user/:userId/contributions", checkAuth, getEventUserContributions)

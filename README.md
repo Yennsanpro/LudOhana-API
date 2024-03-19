@@ -98,7 +98,7 @@ To start the api server just run:
 ### Contributions
 
 In local we have to use this command to allow webhook to work
-```./stripe listen --forward-to localhost:3000/webhooks```
+```./stripe listen --forward-to localhost:3000/webhook```
       
 | METHOD | ENDPOINT                                                | TOKEN | ROLE          | DESCRIPTION                  | POST PARAMS              | RETURNS                  |
 | ------ | ------------------------------------------------------  | ----- | ------------- | ---------------------------- | ------------------------ | ------------------------ |

@@ -1,8 +1,8 @@
-const Material = require('../models/material.model.js')
+const MaterialModel = require('../models/material.model.js')
 
 async function getAllMaterials(req, res) {
 	try {
-		const materials = await Material.findAll()
+		const materials = await MaterialModel.findAll()
 
 		if (materials) {
 			return res.status(200).json(materials)
@@ -16,7 +16,7 @@ async function getAllMaterials(req, res) {
 
 async function getOneMaterial(req, res) {
 	try {
-		const material = await Material.findByPk(req.params.id)
+		const material = await MaterialModel.findByPk(req.params.id)
 		if (material) {
 			return res.status(200).json(material)
 		} else {
@@ -29,7 +29,7 @@ async function getOneMaterial(req, res) {
 
 async function createMaterial(req, res) {
 	try {
-		const material = await Material.create(req.body)
+		const material = await MaterialModel.create(req.body)
 		return res.status(200).json({ message: 'Material created', material: material })
 	} catch (error) {
 		res.status(500).send(error.message)
@@ -38,7 +38,7 @@ async function createMaterial(req, res) {
 
 async function updateMaterial(req, res) {
 	try {
-		const [materialExist] = await Material.update(req.body, {
+		const [materialExist] = await MaterialModel.update(req.body, {
 			where: {
 				id: req.params.id,
 			},
@@ -55,7 +55,7 @@ async function updateMaterial(req, res) {
 
 async function deleteMaterial(req, res) {
 	try {
-		const material = await Material.destroy({
+		const material = await MaterialModel.destroy({
 			where: {
 				id: req.params.id,
 			},

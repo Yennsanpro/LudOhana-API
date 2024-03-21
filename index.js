@@ -1,5 +1,7 @@
 require('dotenv').config()
 const morgan = require('morgan')
+const passport = require('./api/middlewares/oAuth.js')
+
 
 const express = require('express')
 const api = express()
@@ -12,11 +14,10 @@ const { addRelations } = require('./db/relationships')
 api.use(morgan('dev'))
 api.use(express.json())
 api.disable('x-powered-by');
-
 api.use('/api', require('./api/routes/index.route'))
-
 api.use(express.static(path.resolve('api/public')))
 
+api.use(passport.initialize());
 
 const dbCheck = async() => {
     try {

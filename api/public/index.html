@@ -16,15 +16,15 @@
     </form>
 
     <script>
-      const formUser = document.querySelector('form input[type="text"]');
-      const formPass = document.querySelector('form input[type="password"]');
-      const formButton = document.querySelector("form button");
+      const formUser = document.querySelector('form input[type="text"]')
+      const formPass = document.querySelector('form input[type="password"]')
+      const formButton = document.querySelector("form button")
 
       formButton.addEventListener("click", async function (event) {
         const bodyObj = {
           email: formUser.value,
-          password: formPass.value,
-        };
+          password: formPass.value
+        }
 
         const res = await fetch("/api/auth/login", {
           method: "POST",
@@ -32,20 +32,23 @@
             "Content-Type": "application/json",
           },
           body: JSON.stringify(bodyObj),
-        });
+        })
 
-        const data = await res.json();
-        const userToken = { Authorization: data.token };
-        localStorage.setItem("user", JSON.stringify(userToken));
-      });
+        const data = await res.json()
+        const userToken = { Authorization: data.token }
+        console.log(userToken)
+        localStorage.setItem("user", JSON.stringify(userToken))
+      })
 
-      const checkout = document.getElementById("checkout");
+      const checkout = document.getElementById("checkout")
       checkout.addEventListener("click", async () => {
         const bodyObj = {
           name: "Evento Las Palmas",
           description: "Evento de dibujo Las Palmas",
           amount: 100,
-        };
+          event: 1,
+          user: JSON.parse(localStorage.getItem("user"))
+        }
         const res = await fetch("/api/contribution/checkout", {
           method: "POST",
           headers: {
@@ -54,11 +57,11 @@
               .Authorization,
           },
           body: JSON.stringify(bodyObj),
-        });
+        })
 
-        const data = await res.json();
-        window.location.href = data.url;
-      });
+        const data = await res.json()
+        window.location.href = data.url
+      })
     </script>
   </body>
 </html>

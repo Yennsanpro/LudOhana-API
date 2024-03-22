@@ -5,7 +5,7 @@ const { checkAuth, checkAdmin } = require("../middlewares/checkAuth.js");
 const {
   createCheckout,
   webhook,
-  deleteContribution
+  deleteContribution,
 } = require("../controllers/contribution.controller.js");
 
 router.post("/checkout", checkAuth, createCheckout);

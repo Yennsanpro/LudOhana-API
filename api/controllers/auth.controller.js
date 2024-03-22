@@ -9,7 +9,7 @@ const signup = async (req, res) => {
     const salt = bcrypt.genSaltSync(parseInt(process.env.BCRYPT_SALT));
     req.body.password = bcrypt.hashSync(req.body.password, salt);
 
-    req.body.role = 'user'
+    req.body.role = "user";
     const user = await UserModel.create(req.body);
 
     const token = jwt.sign(

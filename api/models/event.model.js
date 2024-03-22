@@ -7,9 +7,9 @@ const EventModel = sequelize.define(
     title: {
       type: DataTypes.STRING,
       allowNull: false,
-      validate:{
-        len:[1,50]
-      }
+      validate: {
+        len: [1, 50],
+      },
     },
     description: {
       type: DataTypes.STRING,
@@ -26,16 +26,16 @@ const EventModel = sequelize.define(
     address: {
       type: DataTypes.STRING,
       allowNull: false,
-      validate:{
-        len:[1,50]
-      }
+      validate: {
+        len: [1, 50],
+      },
     },
     state: {
       type: DataTypes.STRING,
       allowNull: false,
-      validate:{
-        isIn:[['Propoused','Pending','Aproved','Rejected']]
-      }
+      validate: {
+        isIn: [["Propoused", "Pending", "Aproved", "Rejected"]],
+      },
     },
     participants: {
       type: DataTypes.INTEGER,

@@ -41,7 +41,6 @@ const getAllEventsHandler = async (req, res) => {
   }
 };
 
-
 const getPreviousEvents = async (req, res) => {
   const actualTime = Date.now();
 
@@ -91,7 +90,7 @@ const getEventsByState = async (req, res) => {
   try {
     const events = await EventModel.findAll({
       where: {
-        state: req.query.state
+        state: req.query.state,
       },
     });
 
@@ -110,10 +109,11 @@ const getEventByState = async (req, res) => {
   try {
     const user = await res.locals.user;
     const events = await user.getEvents({
-       where:{
-        state: (req.query.state).toLowerCase()
-      } 
-    , joinTableAttributes: [] });
+      where: {
+        state: req.query.state.toLowerCase(),
+      },
+      joinTableAttributes: [],
+    });
     if (events.length === 0) {
       return res.status(404).send(`No events of user found`);
     }
@@ -157,21 +157,26 @@ const createEvent = async (req, res) => {
 
 const registerUserEvent = async (req, res) => {
   try {
-    const event = await EventModel.findByPk(req.params.eventId)
+    const event = await EventModel.findByPk(req.params.eventId);
     const eventUsers = await EventModel.findByPk(req.params.eventId, {
       include: {
-        model: UserModel
-      }
-    })
+        model: UserModel,
+      },
+    });
 
     //We get all inscribed in target event
-    const allObj = eventUsers.users.map(obj => obj.dataValues.user_event.dataValues);
+    const allObj = eventUsers.users.map(
+      (obj) => obj.dataValues.user_event.dataValues
+    );
     const totalCurrInscribed = allObj.reduce((prev, curr) => {
-      return prev + curr.inscribed
-    }, 0)
+      return prev + curr.inscribed;
+    }, 0);
 
     //We make a native SQL query to update inscribed in user_events table
-    if ((totalCurrInscribed + req.body.inscribed) <= eventUsers.dataValues.participants) {
+    if (
+      totalCurrInscribed + req.body.inscribed <=
+      eventUsers.dataValues.participants
+    ) {
       const result = await event.addUser(res.locals.user);
 
       await sequelize.query(
@@ -183,7 +188,6 @@ const registerUserEvent = async (req, res) => {
     } else {
       return res.status(406).send("Event can't allow more inscribeds");
     }
-
   } catch (error) {
     res.status(500).send("Error inscribing on event");
     throw new Error(error);
@@ -193,7 +197,7 @@ const registerUserEvent = async (req, res) => {
 const deleteEventUser = async (req, res) => {
   try {
     const event = await EventModel.findByPk(req.params.eventId);
-    const user = await res.locals.user
+    const user = await res.locals.user;
     const result = await event.removeUser(user);
     if (result) {
       return res.status(200).json("User deleted from Event");
@@ -201,16 +205,16 @@ const deleteEventUser = async (req, res) => {
       return res.status(404).send("Event not found");
     }
   } catch (error) {
-    return res.status(500).send(error.message)
+    return res.status(500).send(error.message);
   }
-}
+};
 
 const getUserEventsHandler = async (req, res) => {
   try {
     if (req.query.filter === EVENTS_DATES.previous) {
       return getUserEventsPrevious(req, res);
     } else if (req.query.state === EVENTS_STATES.propoused) {
-      return getEventByState(req,res)
+      return getEventByState(req, res);
     } else {
       return getUserEventsCurrent(req, res);
     }
@@ -301,97 +305,107 @@ const deleteEvent = async (req, res) => {
 
 const addMaterialEvent = async (req, res) => {
   try {
-    const event = await EventModel.findByPk(req.params.eventId)
-    const material = await MaterialModel.findByPk(req.params.materialId) //We get a material by id
+    const event = await EventModel.findByPk(req.params.eventId);
+    const material = await MaterialModel.findByPk(req.params.materialId); //We get a material by id
 
     let material_eventExist, result;
 
     if (req.body.amountUsed <= material.amount) {
-      material.amount -= req.body.amountUsed
-      material.update({ amount: material.amount }) //We update material target that we get before
+      material.amount -= req.body.amountUsed;
+      material.update({ amount: material.amount }); //We update material target that we get before
 
-      result = await event.addMaterial(material) //We asociate a material with an event
+      result = await event.addMaterial(material); //We asociate a material with an event
 
       //We update amountUsed asociate a material with an event
-      material_eventExist = await Material_EventModel.update({ amountUsed: req.body.amountUsed }, {
-        where: {
-          [Op.and]: [
-            { materialId: req.params.materialId },
-            { eventId: req.params.eventId }
-          ]
+      material_eventExist = await Material_EventModel.update(
+        { amountUsed: req.body.amountUsed },
+        {
+          where: {
+            [Op.and]: [
+              { materialId: req.params.materialId },
+              { eventId: req.params.eventId },
+            ],
+          },
         }
-      })
+      );
     } else {
-      return res.status(406).send('Material amount is not enough in stock')
+      return res.status(406).send("Material amount is not enough in stock");
     }
 
     if (material_eventExist !== 0) {
-      return res.status(200).json({ result, amountUsed: req.body.amountUsed })
+      return res.status(200).json({ result, amountUsed: req.body.amountUsed });
     } else {
-      return res.status(404).send('Event or material not found')
+      return res.status(404).send("Event or material not found");
     }
   } catch (error) {
-    return res.status(500).send(error.message)
+    return res.status(500).send(error.message);
   }
-}
+};
 
 const getMaterialsEvent = async (req, res) => {
   try {
-    const event = await EventModel.findByPk(req.params.eventId)
-    const materials = await event.getMaterials({ joinTableAttributes: [] })
+    const event = await EventModel.findByPk(req.params.eventId);
+    const materials = await event.getMaterials({ joinTableAttributes: [] });
     if (materials !== 0) {
-      return res.status(200).json({ message: "Materials belongs to event", materials: materials })
+      return res
+        .status(200)
+        .json({ message: "Materials belongs to event", materials: materials });
     } else {
-      return res.status(404).send('Materials not found in this event')
+      return res.status(404).send("Materials not found in this event");
     }
   } catch (error) {
-    return res.status(500).send(error.message)
+    return res.status(500).send(error.message);
   }
-}
+};
 
 const getEventUserContributions = async (req, res) => {
   try {
-    const contributions = await ContributionModel.findAll(
-      {
-        where: {
-          [Op.and]: [
-            { userId: res.locals.user.id },
-            { eventId: req.params.eventId }
-          ]
-        }
-      })
+    const contributions = await ContributionModel.findAll({
+      where: {
+        [Op.and]: [
+          { userId: res.locals.user.id },
+          { eventId: req.params.eventId },
+        ],
+      },
+    });
 
     if (contributions !== 0) {
-      return res.status(200).json({ message: "Contributions belongs to user in this event", contributions: contributions })
+      return res
+        .status(200)
+        .json({
+          message: "Contributions belongs to user in this event",
+          contributions: contributions,
+        });
     } else {
-      return res.status(404).send('Materials not found in this event')
+      return res.status(404).send("Materials not found in this event");
     }
   } catch (error) {
-    return res.status(500).send(error.message)
+    return res.status(500).send(error.message);
   }
-}
+};
 
 const getEventContributions = async (req, res) => {
   try {
-    const contributions = await ContributionModel.findAll(
-      {
-        where: {
-          eventId: req.params.eventId
-        }
-      })
+    const contributions = await ContributionModel.findAll({
+      where: {
+        eventId: req.params.eventId,
+      },
+    });
 
     if (contributions !== 0) {
-      return res.status(200).json({ message: "Contributions belongs to user in this event", contributions: contributions })
+      return res
+        .status(200)
+        .json({
+          message: "Contributions belongs to user in this event",
+          contributions: contributions,
+        });
     } else {
-      return res.status(404).send('Materials not found in this event')
+      return res.status(404).send("Materials not found in this event");
     }
   } catch (error) {
-    return res.status(500).send(error.message)
+    return res.status(500).send(error.message);
   }
-}
-
-
-
+};
 
 module.exports = {
   getAllEventsHandler,
@@ -406,5 +420,5 @@ module.exports = {
   addMaterialEvent,
   getMaterialsEvent,
   getEventUserContributions,
-  getEventContributions
-}
+  getEventContributions,
+};

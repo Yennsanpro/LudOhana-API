@@ -1,14 +1,14 @@
-const { DataTypes } = require("sequelize");
-const sequelize = require("../../db");
+const { DataTypes } = require("sequelize")
+const sequelize = require("../../db")
 
-const IMAGE_EXTENSIONS = ["png", "jpeg", "jpg", "webdp"];
+const IMAGE_EXTENSIONS = ["png", "jpeg", "jpg", "webdp"]
 
 function hasValidImageExtension(path) {
   //function created for validate image
-  const lowerCasePath = path.toLowerCase();
+  const lowerCasePath = path.toLowerCase()
   return IMAGE_EXTENSIONS(path).some((extension) =>
     lowerCasePath.endsWith(`${extension}`)
-  );
+  )
 }
 
 const UserModel = sequelize.define("user", {
@@ -57,11 +57,11 @@ const UserModel = sequelize.define("user", {
         if (!hasValidImageExtension(value)) {
           throw new Error(
             "Img should have these extensions: " + `${[...IMAGE_EXTENSIONS]}`
-          );
+          )
         }
       },
     },
   },
-});
+})
 
-module.exports = UserModel;
+module.exports = UserModel

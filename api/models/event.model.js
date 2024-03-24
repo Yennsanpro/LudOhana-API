@@ -1,5 +1,5 @@
-const { DataTypes } = require("sequelize");
-const sequelize = require("../../db");
+const { DataTypes } = require("sequelize")
+const sequelize = require("../../db")
 
 const EventModel = sequelize.define(
   "event",
@@ -53,6 +53,6 @@ const EventModel = sequelize.define(
   {
     timestamps: false,
   }
-);
+)
 
-module.exports = EventModel;
+module.exports = EventModel

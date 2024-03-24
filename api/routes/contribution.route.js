@@ -1,15 +1,19 @@
-const router = require("express").Router();
+const router = require("express").Router()
 
-const { checkAuth, checkAdmin } = require("../middlewares/checkAuth.js");
+const { checkAuth, checkAdmin } = require("../middlewares/checkAuth.js")
 
 const {
   createCheckout,
   webhook,
   deleteContribution,
-} = require("../controllers/contribution.controller.js");
+} = require("../controllers/contribution.controller.js")
 
-router.post("/checkout", checkAuth, createCheckout);
-router.post("/webhook", checkAuth, webhook); // Endpoint to recieve Webhook notifications from Stripe
-router.delete("/:id", checkAuth, checkAdmin, deleteContribution);
+router.post("/checkout", checkAuth, createCheckout)
 
-module.exports = router;
+// Endpoint to recieve Webhook notifications from Stripe
+// We don't need to add "CheckAuth" middleware because it check Stripe session object
+router.post("/webhook", webhook) 
+
+router.delete("/:id", checkAuth, checkAdmin, deleteContribution)
+
+module.exports = router

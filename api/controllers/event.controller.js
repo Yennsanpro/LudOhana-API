@@ -1,48 +1,48 @@
-const EventModel = require("../models/event.model");
-const sequelize = require("../../db/index.js");
-const { Op } = require("sequelize");
-const MaterialModel = require("../models/material.model.js");
-const Material_EventModel = require("../models/material_event.model.js");
-const UserModel = require("../models/user.model.js");
-const ContributionModel = require("../models/contribution.model.js");
+const EventModel = require("../models/event.model")
+const sequelize = require("../../db/index.js")
+const { Op } = require("sequelize")
+const MaterialModel = require("../models/material.model.js")
+const Material_EventModel = require("../models/material_event.model.js")
+const UserModel = require("../models/user.model.js")
+const ContributionModel = require("../models/contribution.model.js")
 
 const EVENTS_STATES = {
   propoused: "Propoused",
   pending: "Pending",
   aproved: "Aproved",
   rejected: "Rejected",
-};
+}
 
 const EVENTS_DATES = {
   previous: "previous",
   current: "current",
-};
+}
 
 const EVENTS_KEYS = {
   state: "state",
-};
+}
 
 const USER_ROLES = {
   user: "user",
   admin: "admin",
-};
+}
 
 const getAllEventsHandler = async (req, res) => {
   try {
     if (req.query.filter === EVENTS_DATES.previous) {
-      return getPreviousEvents(req, res);
+      return getPreviousEvents(req, res)
     } else if (Object.keys(req.query)[0] === EVENTS_KEYS.state) {
-      return getEventsByState(req, res);
+      return getEventsByState(req, res)
     } else {
-      return getCurrentsEvents(req, res);
+      return getCurrentsEvents(req, res)
     }
   } catch (error) {
-    return res.status(500).send("Error getting events");
+    return res.status(500).send("Error getting events")
   }
-};
+}
 
 const getPreviousEvents = async (req, res) => {
-  const actualTime = Date.now();
+  const actualTime = Date.now()
 
   try {
     const events = await EventModel.findAll({
@@ -51,20 +51,20 @@ const getPreviousEvents = async (req, res) => {
           [Op.lt]: actualTime,
         },
       },
-    });
+    })
 
     if (events.length === 0) {
-      return res.status(404).send("No previous events found");
+      return res.status(404).send("No previous events found")
     }
-    return res.status(200).json(events);
+    return res.status(200).json(events)
   } catch (error) {
-    res.status(500).send("Error finding previous events");
-    throw new Error(error);
+    res.status(500).send("Error finding previous events")
+    throw new Error(error)
   }
-};
+}
 
 const getCurrentsEvents = async (req, res) => {
-  const actualTime = Date.now();
+  const actualTime = Date.now()
 
   try {
     const events = await EventModel.findAll({
@@ -73,17 +73,17 @@ const getCurrentsEvents = async (req, res) => {
           [Op.gt]: actualTime,
         },
       },
-    });
+    })
     if (events.length === 0) {
-      return res.status(404).send("No currents events found");
+      return res.status(404).send("No currents events found")
     }
 
-    return res.status(200).json(events);
+    return res.status(200).json(events)
   } catch (error) {
-    res.status(500).send("Error finding currents events");
-    throw new Error(error);
+    res.status(500).send("Error finding currents events")
+    throw new Error(error)
   }
-};
+}
 
 const getEventsByState = async (req, res) => {
   // by admin
@@ -92,137 +92,137 @@ const getEventsByState = async (req, res) => {
       where: {
         state: req.query.state,
       },
-    });
+    })
 
     if (events.length === 0) {
-      return res.status(404).send(`No ${req.params.state} events found`);
+      return res.status(404).send(`No ${req.params.state} events found`)
     }
-    return res.status(200).json(events);
+    return res.status(200).json(events)
   } catch (error) {
-    res.status(500).send(`Error finding ${req.params.state} events`);
-    throw new Error(error);
+    res.status(500).send(`Error finding ${req.params.state} events`)
+    throw new Error(error)
   }
-};
+}
 
 const getEventByState = async (req, res) => {
   // by user
   try {
-    const user = await res.locals.user;
+    const user = await res.locals.user
     const events = await user.getEvents({
       where: {
         state: req.query.state.toLowerCase(),
       },
       joinTableAttributes: [],
-    });
+    })
     if (events.length === 0) {
-      return res.status(404).send(`No events of user found`);
+      return res.status(404).send(`No events of user found`)
     }
-    return res.status(200).json(events);
+    return res.status(200).json(events)
   } catch (error) {
-    res.status(500).send(`Error finding events of user`);
-    throw new Error(error);
+    res.status(500).send(`Error finding events of user`)
+    throw new Error(error)
   }
-};
+}
 
 const getEventById = async (req, res) => {
   try {
-    const event = await EventModel.findByPk(req.params.id);
+    const event = await EventModel.findByPk(req.params.id)
     if (event) {
-      return res.status(200).json(event);
+      return res.status(200).json(event)
     } else {
-      return res.status(404).send("Event not found");
+      return res.status(404).send("Event not found")
     }
   } catch (error) {
-    console.log("error");
-    return res.status(500).send(error.message);
+    console.log("error")
+    return res.status(500).send(error.message)
   }
-};
+}
 
 const createEvent = async (req, res) => {
   try {
     if (res.locals.user.role === USER_ROLES.admin) {
-      req.body.state = EVENTS_STATES.aproved;
+      req.body.state = EVENTS_STATES.aproved
     }
     if (res.locals.user.role === USER_ROLES.user) {
-      req.body.state = EVENTS_STATES.propoused;
+      req.body.state = EVENTS_STATES.propoused
     }
 
-    const event = await EventModel.create(req.body);
-    res.status(200).json(event);
+    const event = await EventModel.create(req.body)
+    res.status(200).json(event)
   } catch (error) {
-    res.status(500).send("Error creating event");
-    throw new Error(error);
+    res.status(500).send("Error creating event")
+    throw new Error(error)
   }
-};
+}
 
 const registerUserEvent = async (req, res) => {
   try {
-    const event = await EventModel.findByPk(req.params.eventId);
+    const event = await EventModel.findByPk(req.params.eventId)
     const eventUsers = await EventModel.findByPk(req.params.eventId, {
       include: {
         model: UserModel,
       },
-    });
+    })
 
     //We get all inscribed in target event
     const allObj = eventUsers.users.map(
       (obj) => obj.dataValues.user_event.dataValues
-    );
+    )
     const totalCurrInscribed = allObj.reduce((prev, curr) => {
-      return prev + curr.inscribed;
-    }, 0);
+      return prev + curr.inscribed
+    }, 0)
 
     //We make a native SQL query to update inscribed in user_events table
     if (
       totalCurrInscribed + req.body.inscribed <=
       eventUsers.dataValues.participants
     ) {
-      const result = await event.addUser(res.locals.user);
+      const result = await event.addUser(res.locals.user)
 
       await sequelize.query(
         `UPDATE user_events SET inscribed = ${req.body.inscribed}
         where eventid = ${req.params.eventId} and userid = ${res.locals.user.id}`
-      );
+      )
 
-      return res.status(200).json(result);
+      return res.status(200).json(result)
     } else {
-      return res.status(406).send("Event can't allow more inscribeds");
+      return res.status(406).send("Event can't allow more inscribeds")
     }
   } catch (error) {
-    res.status(500).send("Error inscribing on event");
-    throw new Error(error);
+    res.status(500).send("Error inscribing on event")
+    throw new Error(error)
   }
-};
+}
 
 const deleteEventUser = async (req, res) => {
   try {
-    const event = await EventModel.findByPk(req.params.eventId);
-    const user = await res.locals.user;
-    const result = await event.removeUser(user);
+    const event = await EventModel.findByPk(req.params.eventId)
+    const user = await res.locals.user
+    const result = await event.removeUser(user)
     if (result) {
-      return res.status(200).json("User deleted from Event");
+      return res.status(200).json("User deleted from Event")
     } else {
-      return res.status(404).send("Event not found");
+      return res.status(404).send("Event not found")
     }
   } catch (error) {
-    return res.status(500).send(error.message);
+    return res.status(500).send(error.message)
   }
-};
+}
 
 const getUserEventsHandler = async (req, res) => {
   try {
     if (req.query.filter === EVENTS_DATES.previous) {
-      return getUserEventsPrevious(req, res);
+      return getUserEventsPrevious(req, res)
     } else if (req.query.state === EVENTS_STATES.propoused) {
-      return getEventByState(req, res);
+      return getEventByState(req, res)
     } else {
-      return getUserEventsCurrent(req, res);
+      return getUserEventsCurrent(req, res)
     }
   } catch (error) {
-    res.status(500).send("Error finding events of user");
-    throw new Error(error);
+    res.status(500).send("Error finding events of user")
+    throw new Error(error)
   }
-};
+}
 
 const getUserEventsCurrent = async (req, res) => {
   try {
@@ -233,18 +233,18 @@ const getUserEventsCurrent = async (req, res) => {
         },
       },
       joinTableAttributes: [],
-    });
+    })
 
     if (events.length === 0) {
-      return res.status(404).send("No currents events found");
+      return res.status(404).send("No currents events found")
     }
 
-    return res.status(200).json(events);
+    return res.status(200).json(events)
   } catch (error) {
-    res.status(500).send("Error finding events of user");
-    throw new Error(error);
+    res.status(500).send("Error finding events of user")
+    throw new Error(error)
   }
-};
+}
 
 const getUserEventsPrevious = async (req, res) => {
   try {
@@ -255,18 +255,18 @@ const getUserEventsPrevious = async (req, res) => {
         },
       },
       joinTableAttributes: [],
-    });
+    })
 
     if (events.length === 0) {
-      return res.status(404).send("No previous events found");
+      return res.status(404).send("No previous events found")
     }
 
-    return res.status(200).json(events);
+    return res.status(200).json(events)
   } catch (error) {
-    res.status(500).send("Error finding events of user");
-    throw new Error(error);
+    res.status(500).send("Error finding events of user")
+    throw new Error(error)
   }
-};
+}
 
 const updateEvent = async (req, res) => {
   try {
@@ -275,16 +275,16 @@ const updateEvent = async (req, res) => {
       where: {
         id: req.params.id,
       },
-    });
+    })
     if (eventExist !== 0) {
-      return res.status(200).json({ message: "Event updated", event: event });
+      return res.status(200).json({ message: "Event updated", event: event })
     } else {
-      return res.status(404).send("Event not found");
+      return res.status(404).send("Event not found")
     }
   } catch (error) {
-    return res.status(500).send(error.message);
+    return res.status(500).send(error.message)
   }
-};
+}
 
 const deleteEvent = async (req, res) => {
   try {
@@ -292,29 +292,29 @@ const deleteEvent = async (req, res) => {
       where: {
         id: req.params.id,
       },
-    });
+    })
     if (event) {
-      return res.status(200).json("Event deleted");
+      return res.status(200).json("Event deleted")
     } else {
-      return res.status(404).send("Event not found");
+      return res.status(404).send("Event not found")
     }
   } catch (error) {
-    return res.status(500).send(error.message);
+    return res.status(500).send(error.message)
   }
-};
+}
 
 const addMaterialEvent = async (req, res) => {
   try {
-    const event = await EventModel.findByPk(req.params.eventId);
-    const material = await MaterialModel.findByPk(req.params.materialId); //We get a material by id
+    const event = await EventModel.findByPk(req.params.eventId)
+    const material = await MaterialModel.findByPk(req.params.materialId) //We get a material by id
 
-    let material_eventExist, result;
+    let material_eventExist, result
 
     if (req.body.amountUsed <= material.amount) {
-      material.amount -= req.body.amountUsed;
-      material.update({ amount: material.amount }); //We update material target that we get before
+      material.amount -= req.body.amountUsed
+      material.update({ amount: material.amount }) //We update material target that we get before
 
-      result = await event.addMaterial(material); //We asociate a material with an event
+      result = await event.addMaterial(material) //We asociate a material with an event
 
       //We update amountUsed asociate a material with an event
       material_eventExist = await Material_EventModel.update(
@@ -327,36 +327,36 @@ const addMaterialEvent = async (req, res) => {
             ],
           },
         }
-      );
+      )
     } else {
-      return res.status(406).send("Material amount is not enough in stock");
+      return res.status(406).send("Material amount is not enough in stock")
     }
 
     if (material_eventExist !== 0) {
-      return res.status(200).json({ result, amountUsed: req.body.amountUsed });
+      return res.status(200).json({ result, amountUsed: req.body.amountUsed })
     } else {
-      return res.status(404).send("Event or material not found");
+      return res.status(404).send("Event or material not found")
     }
   } catch (error) {
-    return res.status(500).send(error.message);
+    return res.status(500).send(error.message)
   }
-};
+}
 
 const getMaterialsEvent = async (req, res) => {
   try {
-    const event = await EventModel.findByPk(req.params.eventId);
-    const materials = await event.getMaterials({ joinTableAttributes: [] });
+    const event = await EventModel.findByPk(req.params.eventId)
+    const materials = await event.getMaterials({ joinTableAttributes: [] })
     if (materials !== 0) {
       return res
         .status(200)
-        .json({ message: "Materials belongs to event", materials: materials });
+        .json({ message: "Materials belongs to event", materials: materials })
     } else {
-      return res.status(404).send("Materials not found in this event");
+      return res.status(404).send("Materials not found in this event")
     }
   } catch (error) {
-    return res.status(500).send(error.message);
+    return res.status(500).send(error.message)
   }
-};
+}
 
 const getEventUserContributions = async (req, res) => {
   try {
@@ -367,7 +367,7 @@ const getEventUserContributions = async (req, res) => {
           { eventId: req.params.eventId },
         ],
       },
-    });
+    })
 
     if (contributions !== 0) {
       return res
@@ -375,14 +375,14 @@ const getEventUserContributions = async (req, res) => {
         .json({
           message: "Contributions belongs to user in this event",
           contributions: contributions,
-        });
+        })
     } else {
-      return res.status(404).send("Materials not found in this event");
+      return res.status(404).send("Materials not found in this event")
     }
   } catch (error) {
-    return res.status(500).send(error.message);
+    return res.status(500).send(error.message)
   }
-};
+}
 
 const getEventContributions = async (req, res) => {
   try {
@@ -390,7 +390,7 @@ const getEventContributions = async (req, res) => {
       where: {
         eventId: req.params.eventId,
       },
-    });
+    })
 
     if (contributions !== 0) {
       return res
@@ -398,14 +398,14 @@ const getEventContributions = async (req, res) => {
         .json({
           message: "Contributions belongs to user in this event",
           contributions: contributions,
-        });
+        })
     } else {
-      return res.status(404).send("Materials not found in this event");
+      return res.status(404).send("Materials not found in this event")
     }
   } catch (error) {
-    return res.status(500).send(error.message);
+    return res.status(500).send(error.message)
   }
-};
+}
 
 module.exports = {
   getAllEventsHandler,
@@ -421,4 +421,4 @@ module.exports = {
   getMaterialsEvent,
   getEventUserContributions,
   getEventContributions,
-};
+}

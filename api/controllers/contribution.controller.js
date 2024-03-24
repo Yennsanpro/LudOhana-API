@@ -1,8 +1,9 @@
-const Stripe = require("stripe");
+const Stripe = require('stripe')
 
-const stripe = new Stripe(process.env.STRIPE_KEY);
+const stripe = new Stripe(process.env.STRIPE_KEY)
 
-const ContributionModel = require("../models/contribution.model.js");
+const ContributionModel = require('../models/contribution.model.js')
+const EventModel = require('../models/event.model.js')
 
 const createCheckout = async (req, res) => {
   try {
@@ -13,7 +14,11 @@ const createCheckout = async (req, res) => {
             "amount": 20
         }
         */
-    const baseUrl = req.protocol + "://" + req.get("host");
+    const event = await EventModel.findByPk(req.body.eventId)
+    if (!event) {
+      return res.status(404).send('Event not found')
+    }
+    const baseUrl = req.protocol + '://' + req.get('host')
     const session = await stripe.checkout.sessions.create({
       line_items: [
         {
@@ -22,51 +27,64 @@ const createCheckout = async (req, res) => {
               name: req.body.name,
               description: req.body.description,
             },
-            currency: "eur",
+            currency: 'eur',
             unit_amount: req.body.amount * 100, // 20 eur must be 2000
           },
           quantity: 1,
         },
       ],
-      metadata: {
-        event: req.body.event,
-        user: res.locals.user,
-      },
-      mode: "payment",
+      mode: 'payment',
       success_url: baseUrl,
       cancel_url: baseUrl,
-    });
-    console.log(session);
-    return res.status(200).json(session);
+      metadata: {
+        eventId: req.body.eventId,
+        userId: res.locals.user.dataValues.id,
+      },
+    })
+    return res.status(200).json(session)
   } catch (error) {
-    return res.status(500).send(error.message);
+    return res.status(500).send(error.message)
   }
-};
+}
 
 const webhook = async (req, res) => {
   try {
-    let event = req.body;
+    let event = req.body
     //Check if event has "checkout.session.completed" type
-    if (event.type === "checkout.session.completed") {
-      const session = event.data.object;
-      await createContribution(req, res, session.amount_total / 100);
+    if (event.type === 'checkout.session.completed') {
+      const session = event.data.object
+      await createContribution(req, res, {
+        amount: session.amount_total / 100,
+        eventId: session.metadata.eventId,
+        userId: session.metadata.userId,
+      })
     }
 
-    res.status(200).end();
+    res.status(200).end()
   } catch (err) {
-    return res.status(400).send(`Webhook Error: ${err.message}`);
+    return res.status(400).send(`Webhook Error: ${err.message}`)
   }
-};
+}
 
-const createContribution = async (req, res, amount) => {
+const createContribution = async (req, res, { amount, userId, eventId }) => {
   try {
-    await ContributionModel.create({ amount: parseInt(amount) });
+    const contributionsFields = [amount, userId, eventId]
+    if (contributionsFields.every((field) => field === null)) {
+      console.log('Contribution fields incomplete')
+      return res.status(406).send('Contribution fields incomplete')
+    }
 
-    res.status(200).send("Contribution successful");
+    await ContributionModel.create({
+      amount: parseInt(amount),
+      userId: parseInt(userId),
+      eventId: parseInt(eventId),
+    })
+
+    res.status(200).send('Contribution successful')
   } catch (error) {
-    return res.status(500).send(error.message);
+    return res.status(500).send(error.message)
   }
-};
+}
 
 async function deleteContribution(req, res) {
   try {
@@ -74,21 +92,20 @@ async function deleteContribution(req, res) {
       where: {
         id: req.params.id,
       },
-    });
+    })
+
     if (contribution) {
-      return res.status(200).json("Contribution deleted");
+      return res.status(200).json('Contribution deleted')
     } else {
-      return res.status(404).send("Contribution not found");
+      return res.status(404).send('Contribution not found')
     }
   } catch (error) {
-    return res.status(500).send(error.message);
+    return res.status(500).send(error.message)
   }
 }
 
 module.exports = {
-  stripe,
   createCheckout,
   webhook,
-  createContribution,
   deleteContribution,
-};
+}

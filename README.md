@@ -97,8 +97,11 @@ To start the api server just run:
 
 ### Contributions
 
-In local we have to use this command to allow webhook to work
-```./stripe listen --forward-to localhost:3000/webhook```
+In local we have to use this command to allow webhook to work:
+- Linux
+```./stripe listen --forward-to localhost:3000/api/contribution/webhook```
+- Windows
+```stripe listen --forward-to localhost:3000/api/contribution/webhook```
       
 | METHOD | ENDPOINT                                                | TOKEN | ROLE          | DESCRIPTION                  | POST PARAMS              | RETURNS                  |
 | ------ | ------------------------------------------------------  | ----- | ------------- | ---------------------------- | ------------------------ | ------------------------ |

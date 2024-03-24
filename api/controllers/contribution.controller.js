@@ -86,11 +86,29 @@ const createContribution = async (req, res, { amount, userId, eventId }) => {
   }
 }
 
-async function deleteContribution(req, res) {
+const updateContribution = async (req, res) => {
+  try {
+    const [contributionExist, contribution] = await ContributionModel.update(req.body, {
+      returning: true,
+      where: {
+        id: req.params.contributionId,
+      },
+    })
+    if (contributionExist !== 0) {
+      return res.status(200).json({ message: "Contribution updated", contribution: contribution })
+    } else {
+      return res.status(404).send("Contribution not found")
+    }
+  } catch (error) {
+    return res.status(500).send(error.message)
+  }
+}
+
+const deleteContribution = async(req, res) => {
   try {
     const contribution = await ContributionModel.destroy({
       where: {
-        id: req.params.id,
+        id: req.params.contributionId,
       },
     })
 
@@ -107,5 +125,6 @@ async function deleteContribution(req, res) {
 module.exports = {
   createCheckout,
   webhook,
+  updateContribution,
   deleteContribution,
 }

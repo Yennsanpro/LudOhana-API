@@ -5,6 +5,7 @@ const { checkAuth, checkAdmin } = require("../middlewares/checkAuth.js")
 const {
   createCheckout,
   webhook,
+  updateContribution,
   deleteContribution,
 } = require("../controllers/contribution.controller.js")
 
@@ -14,6 +15,7 @@ router.post("/checkout", checkAuth, createCheckout)
 // We don't need to add "CheckAuth" middleware because it check Stripe session object
 router.post("/webhook", webhook) 
 
-router.delete("/:id", checkAuth, checkAdmin, deleteContribution)
+router.put("/:contributionId", checkAuth, checkAdmin, updateContribution)
+router.delete("/:contributionId", checkAuth, checkAdmin, deleteContribution)
 
 module.exports = router

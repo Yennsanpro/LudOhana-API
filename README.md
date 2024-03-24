@@ -70,11 +70,11 @@ To start the api server just run:
 
 | METHOD | ENDPOINT                        | TOKEN | ROLE          | DESCRIPTION                | POST PARAMS              | RETURNS                               |
 | ------ | ------------------------------- | ----- | ------------- | -------------------------- | ------------------------ | ------------------------------------- |
-| GET    | {{baseURL}}/auth/:userId        | YES   | User          | Get user by id             | -                        | { user }                              |
+| GET    | {{baseURL}}/auth                | YES   | User          | Get user by id             | -                        | { user }                              |
 | POST   | {{baseURL}}/auth/signup         | NO    | User          | Create one user            | req.body                 | { token, message: "Account created" } |
 | POST   | {{baseURL}}/auth/login          | NO    | User          | Sign in                    | req.body                 | { token }                             |
-| PUT    | {{baseURL}}/auth/:userId        | YES   | User          | Update one user            | req.body, req.params     | { message: "User updated", user }     |
-| DELETE | {{baseURL}}/auth/:userId        | YES   | User          | Remove one user            | userId                   | "User deleted"                        |
+| PUT    | {{baseURL}}/auth                | YES   | User          | Update one user            | req.body                 | { message: "User updated", user }     |
+| DELETE | {{baseURL}}/auth                | YES   | User          | Remove one user            | -                        | "User deleted"                        |
 
 
 ### Events
@@ -84,16 +84,17 @@ To start the api server just run:
 | GET    | {{baseURL}}/events                             | NO    | Public        | Get currents events                 | req.query                | [{ events }]       |     
 | GET    | {{baseURL}}/events?filter=previous             | NO    | Public        | Get previous events                 | req.query                | [{ events }]       |     
 | GET    | {{baseURL}}/events?state=Propoused             | NO    | Public        | Get events by state                 | req.query                | [{ events }]       |  
-| GET    | {{baseURL}}/events/user/:userId                | YES   | User          | Get registered events from the user | req.params,req.query     | [{ events }]       |     
-| GET    | {{baseURL}}/events/user/:userId?filter=previous| YES   | User          | Get past user events                | req.params               | [{ events }]       |     
-| GET    | {{baseURL}}/events/:eventId/user/:userId       | YES   | User          | Get user events propoused           | req.params               | [{ events }]       |      
+| GET    | {{baseURL}}/events/user                        | YES   | User          | Get registered events from the user | req.params,req.query     | [{ events }]       |     
+| GET    | {{baseURL}}/events/user?filter=previous        | YES   | User          | Get past user events                | req.params               | [{ events }]       |     
+| GET    | {{baseURL}}/events/:eventId/user               | YES   | User          | Get user events propoused           | req.params               | [{ events }]       |      
 | GET    | {{baseURL}}/events/:eventState                 | YES   | Admin         | Get user events by state            | req.params               | [{ events }]       |
 | GET    | {{baseURL}}/events/:eventId                    | NO    | Public        | Get one event                       | req.params               | { event }          |   
+| GET    | {{baseURL}}/events/:eventId/user/contribution  | YES   | User          | Get user contribution by eventId    | req.params               | [{ contributions }]|       
+| GET    | {{baseURL}}/events/:eventId/contributions      | YES   | Admin         | Get contributions by eventId        | req.params               | [{ contributions }]|
 | POST   | {{baseURL}}/events                             | YES   | Admin/User    | Create one event                    | req.body                 | { events }         |   
-| PUT    | {{baseURL}}/events/:eventId/user/:userId       | YES   | User          | Registers to an event               | req.params,req.body      | { events }         |    
+| PUT    | {{baseURL}}/events/:eventId/user               | YES   | User          | Registers to an event               | req.params,req.body      | { events }         |    
 | PUT    | {{baseURL}}/events/:eventId                    | YES   | Admin         | Update one event                    | req.params,req.body      | { event }          |     
 | DELETE | {{baseURL}}/events/:eventId                    | YES   | Admin         | Remove one event                    | eventId                  | "Event deleted"    |      
-
 
 ### Contributions
 
@@ -106,14 +107,10 @@ In local we have to use this command to allow webhook to work:
 | METHOD | ENDPOINT                                                | TOKEN | ROLE          | DESCRIPTION                  | POST PARAMS              | RETURNS                  |
 | ------ | ------------------------------------------------------  | ----- | ------------- | ---------------------------- | ------------------------ | ------------------------ |
 | POST   | {{baseURL}}/contribution/checkout                       | YES   | User          | Show Stripe checkout         | req.body                 | [{ session }]            |
-| POST   | {{baseURL}}/contribution/webhook                        | YES   | User          | Events from Stripe           | webhook                  | -           |
-<!--
-| GET    | {{baseURL}}/contributions                               | YES   | Admin         | Get contributions            | -                        | [{ contributions }]      |
-| GET    | {{baseURL}}/contributions/:contributionId/event/:eventId| YES   | User/Admin    | Get contributions by eventId | req.params               | { contributions }        |       
-| POST   | {{baseURL}}/contributions                               | YES   | User          | Make a contribution          | req.body                 | { contributions }        |
-| PUT    | {{baseURL}}/contributions/:contributionId               | YES   | User          | Update contribution          | req.body,req.params      | { contributions}         |
+| POST   | {{baseURL}}/contribution/webhook                        | YES   | User          | Events from Stripe           | webhook                  | -                        |
+| PUT    | {{baseURL}}/contributions/:contributionId               | YES   | Admin         | Update contribution          | req.body,req.params      | "Contribution updated"   |
 | DELETE | {{baseURL}}/contributions/:contributionId               | YES   | Admin         | Remove one contrbution       | contributionId           | "Contribution deleted"   |
--->
+
 
 
 ### Materials

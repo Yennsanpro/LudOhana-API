@@ -16,7 +16,7 @@ async function getAllMaterials(req, res) {
 
 async function getOneMaterial(req, res) {
 	try {
-		const material = await MaterialModel.findByPk(req.params.id)
+		const material = await MaterialModel.findByPk(req.params.materialId)
 		if (material) {
 			return res.status(200).json(material)
 		} else {
@@ -40,7 +40,7 @@ async function updateMaterial(req, res) {
 	try {
 		const [materialExist] = await MaterialModel.update(req.body, {
 			where: {
-				id: req.params.id,
+				id: req.params.materialId,
 			},
 		})
         if (materialExist !== 0) {
@@ -57,7 +57,7 @@ async function deleteMaterial(req, res) {
 	try {
 		const material = await MaterialModel.destroy({
 			where: {
-				id: req.params.id,
+				id: req.params.materialId,
 			},
 		})
 		if (material) {

@@ -358,7 +358,7 @@ const getMaterialsEvent = async (req, res) => {
   }
 }
 
-const getEventUserContributions = async (req, res) => {
+const getEventUserContribution = async (req, res) => {
   try {
     const contributions = await ContributionModel.findAll({
       where: {
@@ -373,11 +373,11 @@ const getEventUserContributions = async (req, res) => {
       return res
         .status(200)
         .json({
-          message: "Contributions belongs to user in this event",
+          message: "Contribution belongs to user in this event",
           contributions: contributions,
         })
     } else {
-      return res.status(404).send("Materials not found in this event")
+      return res.status(404).send("Contribution not found in this event")
     }
   } catch (error) {
     return res.status(500).send(error.message)
@@ -396,11 +396,11 @@ const getEventContributions = async (req, res) => {
       return res
         .status(200)
         .json({
-          message: "Contributions belongs to user in this event",
+          message: "Contributions in this event",
           contributions: contributions,
         })
     } else {
-      return res.status(404).send("Materials not found in this event")
+      return res.status(404).send("Contributions not found in this event")
     }
   } catch (error) {
     return res.status(500).send(error.message)
@@ -419,6 +419,6 @@ module.exports = {
   deleteEvent,
   addMaterialEvent,
   getMaterialsEvent,
-  getEventUserContributions,
+  getEventUserContribution,
   getEventContributions,
 }

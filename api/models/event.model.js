@@ -25,7 +25,7 @@ const EventModel = sequelize.define(
     },
     address: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
       validate: {
         len: [1, 50],
       },
@@ -41,18 +41,16 @@ const EventModel = sequelize.define(
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    latitude: {
-      type: DataTypes.DOUBLE,
-      allowNull: true,
+    imageUrl: {
+      type: DataTypes.STRING,
+      allowNull: false,
     },
-    lenght: {
-      type: DataTypes.DOUBLE,
-      allowNull: true,
-    },
+    contributionRequired: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+    }
   },
-  {
-    timestamps: false,
-  }
+  { createdAt: false, updatedAt: false }
 )
 
 module.exports = EventModel

@@ -12,13 +12,13 @@ function generateToken(email) {
 }
 
 async function loginWithGoogle( response ) {
-  console.log('Response received:', response);
+
   try {
     const email = response.emails[0].value;
-    console.log("email: "+ email)
+
     // Verificar si el email existe en la base de datos
     const existingUser = await UserModel.findOne({ where: { email: email } });
-     console.log("existingUser",existingUser)
+    
     if (existingUser) {
       // Si el usuario ya existe, le asignamos un token y lo pasamos al siguiente middleware
       const token = generateToken(existingUser.email);
@@ -36,7 +36,7 @@ async function loginWithGoogle( response ) {
       });
 
       const token = generateToken(newUser.email);
-      //res.status(200).json({ token: token })
+      return {token:token}
     }
   } catch (error) {
     console.log(error);

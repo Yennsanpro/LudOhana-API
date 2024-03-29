@@ -35,59 +35,11 @@ const checkAdmin = (req, res, next) => {
     }
 }
 
-/* const initialize = (req,res,next)=>{
-    console.log("estoy en initialize")
-    passport.initialize()
-    next()
-} */
-/* const setGoogleAuth = (req, res , next)=>{
-    console.log("estoy en set")
-    passport.authenticate("auth-google", {
-        scope: [
-            "https://www.googleapis.com/auth/userinfo.profile",
-            "https://www.googleapis.com/auth/userinfo.email",
-        ],
-        session: false,
-    })
-    next()
-}
- */
-
-
-
-/* const checkGoogleAuth = (req,res,next)=>{
-    console.log("estoy en check")
-    const emails = [];
-    
-    passport.use(
-      "auth-google",
-      new OAuth2Strategy(
-        {
-          clientID: process.env.GOOGLE_CLIENT_ID,
-          clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-          callbackURL: "http://localhost:3000/auth/google",
-        },
-        function (accessToken, refreshToken, profile, done) {
-          const response = emails.includes(profile.emails[0].value);
-          // IF EXITS IN DATABASE
-          if (response) {
-            done(null, profile);
-          } else {
-            // SAVE IN DATABASE
-            emails.push(profile.emails[0].value);
-            done(null, profile);
-          }
-        }
-      )
-    )
-    next()
-}
- */
 
 module.exports = {
     checkAuth,
     checkAdmin,
-    //setGoogleAuth
+
     
     
 }

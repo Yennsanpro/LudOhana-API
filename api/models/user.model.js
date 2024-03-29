@@ -44,15 +44,15 @@ const UserModel = sequelize.define("user", {
   },
   address: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
   },
   description: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
   },
   image: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
     validate: {
       //on the top has the function to make this validate
       endsWithValidImageExtension(value) {

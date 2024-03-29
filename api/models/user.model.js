@@ -42,15 +42,17 @@ const UserModel = sequelize.define("user", {
       isIn: [[undefined, "user", "admin"]], //define the admin roll
     },
   },
-  location: {
+  address: {
     type: DataTypes.STRING,
     allowNull: false,
   },
   description: {
     type: DataTypes.STRING,
+    allowNull: false,
   },
   image: {
     type: DataTypes.STRING,
+    allowNull: false,
     validate: {
       //on the top has the function to make this validate
       endsWithValidImageExtension(value) {

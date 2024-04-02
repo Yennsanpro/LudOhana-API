@@ -22,7 +22,9 @@ async function loginWithGoogle( response ) {
     if (existingUser) {
       // Si el usuario ya existe, le asignamos un token y lo pasamos al siguiente middleware
       const token = generateToken(existingUser.email);
-      return { token: token };
+      
+     // response.status(200).json({ token: token, role:existingUser.role,message: "Account created" });
+      return { token: token, role:existingUser.role,message: "Account created"  };
     } else {
       // Si el usuario no existe, lo creamos utilizando los datos de Google
       const salt = bcrypt.genSaltSync(parseInt(process.env.BCRYPT_SALT));
@@ -34,9 +36,11 @@ async function loginWithGoogle( response ) {
         role:'user'
     
       });
-
+      
       const token = generateToken(newUser.email);
-      return {token:token}
+      return { token: token, role:newUser.role,message: "Account created"  };
+     //response.status(200).json({ token: token, role:newUser.role,message: "Account created" });
+   
     }
   } catch (error) {
     console.log(error);

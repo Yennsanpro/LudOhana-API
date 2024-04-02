@@ -8,7 +8,7 @@ const Material_EventModel = require('../api/models/material_event.model.js')
 
 const dbSync =async() => {
     try {
-        //await UserModel.sync({alter:true}) 
+       //await UserModel.sync({alter:true}) 
         // await EventModel.sync()
         // await MaterialModel.sync()
         // await ContributionModel.sync()

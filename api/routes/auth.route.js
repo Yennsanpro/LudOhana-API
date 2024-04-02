@@ -3,7 +3,7 @@ const router = require('express').Router()
 const {checkAuth} = require('../middlewares/checkAuth.js')
 
 const {
-    signup,//comes from auth controller
+    signup,
     login,
     getUser,
     updateUser,

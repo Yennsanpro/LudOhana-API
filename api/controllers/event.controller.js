@@ -1,30 +1,30 @@
-const EventModel = require("../models/event.model")
-const sequelize = require("../../db/index.js")
-const { Op } = require("sequelize")
-const MaterialModel = require("../models/material.model.js")
-const Material_EventModel = require("../models/material_event.model.js")
-const UserModel = require("../models/user.model.js")
-const ContributionModel = require("../models/contribution.model.js")
+const EventModel = require('../models/event.model')
+const sequelize = require('../../db/index.js')
+const { Op } = require('sequelize')
+const MaterialModel = require('../models/material.model.js')
+const Material_EventModel = require('../models/material_event.model.js')
+const UserModel = require('../models/user.model.js')
+const ContributionModel = require('../models/contribution.model.js')
 
 const EVENTS_STATES = {
-  propoused: "Propoused",
-  pending: "Pending",
-  aproved: "Aproved",
-  rejected: "Rejected",
+  propoused: 'Propoused',
+  pending: 'Pending',
+  aproved: 'Aproved',
+  rejected: 'Rejected',
 }
 
 const EVENTS_DATES = {
-  previous: "previous",
-  current: "current",
+  previous: 'previous',
+  current: 'current',
 }
 
 const EVENTS_KEYS = {
-  state: "state",
+  state: 'state',
 }
 
 const USER_ROLES = {
-  user: "user",
-  admin: "admin",
+  user: 'user',
+  admin: 'admin',
 }
 
 const getAllEventsHandler = async (req, res) => {
@@ -37,7 +37,7 @@ const getAllEventsHandler = async (req, res) => {
       return getCurrentsEvents(req, res)
     }
   } catch (error) {
-    return res.status(500).send("Error getting events")
+    return res.status(500).send('Error getting events')
   }
 }
 
@@ -54,11 +54,11 @@ const getPreviousEvents = async (req, res) => {
     })
 
     if (events.length === 0) {
-      return res.status(404).send("No previous events found")
+      return res.status(404).send('No previous events found')
     }
     return res.status(200).json(events)
   } catch (error) {
-    res.status(500).send("Error finding previous events")
+    res.status(500).send('Error finding previous events')
     throw new Error(error)
   }
 }
@@ -75,12 +75,12 @@ const getCurrentsEvents = async (req, res) => {
       },
     })
     if (events.length === 0) {
-      return res.status(404).send("No currents events found")
+      return res.status(404).send('No currents events found')
     }
 
     return res.status(200).json(events)
   } catch (error) {
-    res.status(500).send("Error finding currents events")
+    res.status(500).send('Error finding currents events')
     throw new Error(error)
   }
 }
@@ -130,10 +130,10 @@ const getEventById = async (req, res) => {
     if (event) {
       return res.status(200).json(event)
     } else {
-      return res.status(404).send("Event not found")
+      return res.status(404).send('Event not found')
     }
   } catch (error) {
-    console.log("error")
+    console.log('error')
     return res.status(500).send(error.message)
   }
 }
@@ -150,7 +150,7 @@ const createEvent = async (req, res) => {
     const event = await EventModel.create(req.body)
     res.status(200).json(event)
   } catch (error) {
-    res.status(500).send("Error creating event")
+    res.status(500).send('Error creating event')
     throw new Error(error)
   }
 }
@@ -189,7 +189,7 @@ const registerUserEvent = async (req, res) => {
       return res.status(406).send("Event can't allow more inscribeds")
     }
   } catch (error) {
-    res.status(500).send("Error inscribing on event")
+    res.status(500).send('Error inscribing on event')
     throw new Error(error)
   }
 }
@@ -200,9 +200,9 @@ const deleteEventUser = async (req, res) => {
     const user = await res.locals.user
     const result = await event.removeUser(user)
     if (result) {
-      return res.status(200).json("User deleted from Event")
+      return res.status(200).json('User deleted from Event')
     } else {
-      return res.status(404).send("Event not found")
+      return res.status(404).send('Event not found')
     }
   } catch (error) {
     return res.status(500).send(error.message)
@@ -214,12 +214,13 @@ const getUserEventsHandler = async (req, res) => {
     if (req.query.filter === EVENTS_DATES.previous) {
       return getUserEventsPrevious(req, res)
     } else if (req.query.state === EVENTS_STATES.propoused) {
+      console.log(req.query)
       return getEventByState(req, res)
     } else {
       return getUserEventsCurrent(req, res)
     }
   } catch (error) {
-    res.status(500).send("Error finding events of user")
+    res.status(500).send('Error finding events of user')
     throw new Error(error)
   }
 }
@@ -236,12 +237,12 @@ const getUserEventsCurrent = async (req, res) => {
     })
 
     if (events.length === 0) {
-      return res.status(404).send("No currents events found")
+      return res.status(404).send('No currents events found')
     }
 
     return res.status(200).json(events)
   } catch (error) {
-    res.status(500).send("Error finding events of user")
+    res.status(500).send('Error finding events of user')
     throw new Error(error)
   }
 }
@@ -258,12 +259,12 @@ const getUserEventsPrevious = async (req, res) => {
     })
 
     if (events.length === 0) {
-      return res.status(404).send("No previous events found")
+      return res.status(404).send('No previous events found')
     }
 
     return res.status(200).json(events)
   } catch (error) {
-    res.status(500).send("Error finding events of user")
+    res.status(500).send('Error finding events of user')
     throw new Error(error)
   }
 }
@@ -277,9 +278,9 @@ const updateEvent = async (req, res) => {
       },
     })
     if (eventExist !== 0) {
-      return res.status(200).json({ message: "Event updated", event: event })
+      return res.status(200).json({ message: 'Event updated', event: event })
     } else {
-      return res.status(404).send("Event not found")
+      return res.status(404).send('Event not found')
     }
   } catch (error) {
     return res.status(500).send(error.message)
@@ -294,9 +295,9 @@ const deleteEvent = async (req, res) => {
       },
     })
     if (event) {
-      return res.status(200).json("Event deleted")
+      return res.status(200).json('Event deleted')
     } else {
-      return res.status(404).send("Event not found")
+      return res.status(404).send('Event not found')
     }
   } catch (error) {
     return res.status(500).send(error.message)
@@ -329,32 +330,57 @@ const addMaterialEvent = async (req, res) => {
         }
       )
     } else {
-      return res.status(406).send("Material amount is not enough in stock")
+      return res.status(406).send('Material amount is not enough in stock')
     }
 
     if (material_eventExist !== 0) {
       return res.status(200).json({ result, amountUsed: req.body.amountUsed })
     } else {
-      return res.status(404).send("Event or material not found")
+      return res.status(404).send('Event or material not found')
     }
   } catch (error) {
     return res.status(500).send(error.message)
   }
 }
 
-const getMaterialsEvent = async (req, res) => {
+const getMaterialsEvents = async (req, res) => {
   try {
-    const event = await EventModel.findByPk(req.params.eventId)
-    const materials = await event.getMaterials({ joinTableAttributes: [] })
-    if (materials !== 0) {
+    const material_event_all = await Material_EventModel.findAll()
+    const material_all = await MaterialModel.findAll()
+    const event_all = await EventModel.findAll()
+
+    const allMaterialEvent = material_event_all.map((obj) => obj.dataValues)
+    const allMaterial = material_all.map((obj) => obj.dataValues)
+    const allEvent = event_all.map((obj) => ({
+      id: obj.dataValues.id,
+      title: obj.dataValues.title,
+    }))
+    console.log(allMaterialEvent)
+    console.log(allMaterial)
+    console.log(allEvent)
+    const allMaterialEventData = { allMaterialEvent, allMaterial, allEvent }
+
+    if (allMaterialEventData !== 0) {
       return res
         .status(200)
-        .json({ message: "Materials belongs to event", materials: materials })
-    } else {
-      return res.status(404).send("Materials not found in this event")
+        .json({allMaterialEventData: allMaterialEventData })
+    }else{
+      return res.status(404).send("Materials or events not found")
     }
+
+    // Old method
+    // const event = await EventModel.findByPk(req.params.eventId)
+    // const materials = await event.getMaterials({ joinTableAttributes: [] })
+
+    // if (materials !== 0) {
+    //   return res
+    //     .status(200)
+    //     .json({ message: "Materials belongs to event", materials: materials })
+    // } else {
+    //   return res.status(404).send("Materials not found in this event")
+    // }
   } catch (error) {
-    return res.status(500).send(error.message)
+    return res.status(500).send('Error with materials or events')
   }
 }
 
@@ -370,14 +396,12 @@ const getEventUserContribution = async (req, res) => {
     })
 
     if (contributions !== 0) {
-      return res
-        .status(200)
-        .json({
-          message: "Contribution belongs to user in this event",
-          contributions: contributions,
-        })
+      return res.status(200).json({
+        message: 'Contribution belongs to user in this event',
+        contributions: contributions,
+      })
     } else {
-      return res.status(404).send("Contribution not found in this event")
+      return res.status(404).send('Contribution not found in this event')
     }
   } catch (error) {
     return res.status(500).send(error.message)
@@ -393,14 +417,12 @@ const getEventContributions = async (req, res) => {
     })
 
     if (contributions !== 0) {
-      return res
-        .status(200)
-        .json({
-          message: "Contributions in this event",
-          contributions: contributions,
-        })
+      return res.status(200).json({
+        message: 'Contributions in this event',
+        contributions: contributions,
+      })
     } else {
-      return res.status(404).send("Contributions not found in this event")
+      return res.status(404).send('Contributions not found in this event')
     }
   } catch (error) {
     return res.status(500).send(error.message)
@@ -418,7 +440,7 @@ module.exports = {
   updateEvent,
   deleteEvent,
   addMaterialEvent,
-  getMaterialsEvent,
+  getMaterialsEvents,
   getEventUserContribution,
   getEventContributions,
 }

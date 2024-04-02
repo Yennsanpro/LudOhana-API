@@ -11,7 +11,7 @@ const {
   updateEvent,
   deleteEvent,
   addMaterialEvent,
-  getMaterialsEvent,
+  getMaterialsEvents,
   getEventUserContribution,
   getEventContributions,
   deleteEventUser,
@@ -20,8 +20,9 @@ const {
 router.get('/', getAllEventsHandler)
 router.get('/:eventId/user', checkAuth, getEventByState)
 router.get('/user', checkAuth, getUserEventsHandler)
+router.get('/materials', checkAuth, checkAdmin, getMaterialsEvents)
 router.get('/:id', getEventById)
-router.get('/:eventId/materials', checkAuth, checkAdmin, getMaterialsEvent)
+//router.get('/:eventId/materials', checkAuth, checkAdmin, getMaterialsEvents)
 router.get(
   '/:eventId/user/contribution',
   checkAuth,

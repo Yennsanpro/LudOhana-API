@@ -20,7 +20,7 @@ const signup = async (req, res) => {
       //{ expiresIn: '7d' } //solo se pone al terminar la aplicación
     )
 
-    res.status(200).json({ token: token, message: "Account created" })
+    res.status(200).json({ token: token, role: user.role, message: "Account created" })
   } catch (error) {
     console.log(error)
     res.status(500).send("Error Signing up")
@@ -47,7 +47,7 @@ const login = async (req, res) => {
 
       process.env.JWT_SECRET
     )
-    return res.status(200).json({ token: token })
+    return res.status(200).json({ token: token, role: user.role })
   } catch (error) {
     console.log(error)
     res.status(500).send("Error login up")

@@ -66,6 +66,7 @@ To start the api server just run:
 
 ## Endpoints
 {{baseURL}} = http://localhost:port/api
+{{baseURL}} = https://ludohana.onrender.com
 ### Users
 
 | METHOD | ENDPOINT                        | TOKEN | ROLE          | DESCRIPTION                | POST PARAMS              | RETURNS                               |

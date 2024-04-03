@@ -1,8 +1,8 @@
-const { DataTypes } = require("sequelize")
-const sequelize = require("../../db")
+const { DataTypes } = require('sequelize')
+const sequelize = require('../../db')
 
 const EventModel = sequelize.define(
-  "event",
+  'event',
   {
     title: {
       type: DataTypes.STRING,
@@ -34,7 +34,7 @@ const EventModel = sequelize.define(
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
-        isIn: [["Propoused", "Pending", "Aproved", "Rejected"]],
+        isIn: [['Propoused', 'Pending', 'Aproved', 'Rejected']],
       },
     },
     participants: {
@@ -45,10 +45,14 @@ const EventModel = sequelize.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    contributionRequired: {
+    isContributionRequired: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
-    }
+    },
+    contributionRequired: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
   },
   { createdAt: false, updatedAt: false }
 )

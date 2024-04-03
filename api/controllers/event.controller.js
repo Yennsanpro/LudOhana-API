@@ -47,9 +47,14 @@ const getPreviousEvents = async (req, res) => {
   try {
     const events = await EventModel.findAll({
       where: {
-        dateEnd: {
-          [Op.lt]: actualTime,
-        },
+        [Op.and]: [
+          {
+            dateEnd: {
+              [Op.lt]: actualTime,
+            },
+          },
+          { state: EVENTS_STATES.aproved },
+        ],
       },
     })
 
@@ -69,9 +74,14 @@ const getCurrentsEvents = async (req, res) => {
   try {
     const events = await EventModel.findAll({
       where: {
-        dateStart: {
-          [Op.gt]: actualTime,
-        },
+        [Op.and]: [
+          {
+            dateStart: {
+              [Op.gt]: actualTime,
+            },
+          },
+          { state: EVENTS_STATES.aproved },
+        ],
       },
     })
     if (events.length === 0) {
@@ -441,7 +451,7 @@ const getEventsContributions = async (req, res) => {
       id: obj.dataValues.id,
       title: obj.dataValues.title,
     }))
-    
+
     const allContributionsData = { allContributions, allUsers, allEvents }
 
     if (allContributionsData !== 0) {
@@ -452,7 +462,7 @@ const getEventsContributions = async (req, res) => {
       return res.status(404).send('Contributions not found')
     }
   } catch (error) {
-    return res.status(500).send("Contributions error getting data")
+    return res.status(500).send('Contributions error getting data')
   }
 }
 

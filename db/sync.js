@@ -9,11 +9,11 @@ const dbSync = async () => {
   try {
     //Care UserModel indexes
     //await UserModel.sync()
-    await EventModel.sync({alter: true})
+    //await EventModel.sync()
     //await MaterialModel.sync()
     //await ContributionModel.sync()
     //await User_EventModel.sync()
-    await Material_EventModel.sync({alter: true})
+    //await Material_EventModel.sync()
   } catch (error) {
     throw new Error(error)
   }

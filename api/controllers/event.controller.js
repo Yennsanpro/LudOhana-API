@@ -374,20 +374,33 @@ const getMaterialsEvents = async (req, res) => {
     } else {
       return res.status(404).send('Materials or events not found')
     }
-
-    // Old method
-    // const event = await EventModel.findByPk(req.params.eventId)
-    // const materials = await event.getMaterials({ joinTableAttributes: [] })
-
-    // if (materials !== 0) {
-    //   return res
-    //     .status(200)
-    //     .json({ message: "Materials belongs to event", materials: materials })
-    // } else {
-    //   return res.status(404).send("Materials not found in this event")
-    // }
   } catch (error) {
     return res.status(500).send('Error with materials or events')
+  }
+}
+
+const updateMaterialsEvents = async (req, res) => {
+  try {
+    //amountUsed, materialId, eventId
+    const [materialEventExist] =
+      await Material_EventModel.update(req.body, {
+        returning: true,
+        where: {
+          [Op.and]: [
+            { eventId: req.params.eventId },
+            { materialId: req.params.materialId },
+          ],
+        },
+      })
+    if (materialEventExist !== 0) {
+      return res
+        .status(200)
+        .json({ message: 'Materials and materialEvent updated' })
+    } else {
+      return res.status(404).send('Materials or materialEvent not found')
+    }
+  } catch (error) {
+    return res.status(500).send('Error with materials or materialEvent')
   }
 }
 
@@ -481,4 +494,5 @@ module.exports = {
   getEventUserContribution,
   getEventContributions,
   getEventsContributions,
+  updateMaterialsEvents,
 }

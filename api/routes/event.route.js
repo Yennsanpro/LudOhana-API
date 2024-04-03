@@ -15,6 +15,7 @@ const {
   getEventUserContribution,
   getEventContributions,
   getEventsContributions,
+  updateMaterialsEvents,
   deleteEventUser,
 } = require('../controllers/event.controller')
 
@@ -48,6 +49,12 @@ router.put(
   checkAuth,
   checkAdmin,
   addMaterialEvent
+)
+router.post(
+  '/:eventId/materials/:materialId',
+  checkAuth,
+  checkAdmin,
+  updateMaterialsEvents
 )
 router.put('/:id', checkAuth, checkAdmin, updateEvent)
 router.delete('/:id', checkAuth, checkAdmin, deleteEvent)

@@ -14,6 +14,7 @@ const {
   getMaterialsEvents,
   getEventUserContribution,
   getEventContributions,
+  getEventsContributions,
   deleteEventUser,
 } = require('../controllers/event.controller')
 
@@ -21,6 +22,12 @@ router.get('/', getAllEventsHandler)
 router.get('/:eventId/user', checkAuth, getEventByState)
 router.get('/user', checkAuth, getUserEventsHandler)
 router.get('/materials', checkAuth, checkAdmin, getMaterialsEvents)
+router.get(
+  '/contributions',
+  checkAuth,
+  checkAdmin,
+  getEventsContributions
+)
 router.get('/:id', getEventById)
 //router.get('/:eventId/materials', checkAuth, checkAdmin, getMaterialsEvents)
 router.get(

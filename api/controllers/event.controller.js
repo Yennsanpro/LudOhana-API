@@ -360,9 +360,9 @@ const getMaterialsEvents = async (req, res) => {
     if (allMaterialEventData !== 0) {
       return res
         .status(200)
-        .json({allMaterialEventData: allMaterialEventData })
-    }else{
-      return res.status(404).send("Materials or events not found")
+        .json({ allMaterialEventData: allMaterialEventData })
+    } else {
+      return res.status(404).send('Materials or events not found')
     }
 
     // Old method
@@ -426,6 +426,36 @@ const getEventContributions = async (req, res) => {
   }
 }
 
+const getEventsContributions = async (req, res) => {
+  try {
+    const contributions = await ContributionModel.findAll()
+    const user_all = await UserModel.findAll()
+    const event_all = await EventModel.findAll()
+
+    const allContributions = contributions.map((obj) => obj.dataValues)
+    const allUsers = user_all.map((obj) => ({
+      id: obj.dataValues.id,
+      email: obj.dataValues.email,
+    }))
+    const allEvents = event_all.map((obj) => ({
+      id: obj.dataValues.id,
+      title: obj.dataValues.title,
+    }))
+    
+    const allContributionsData = { allContributions, allUsers, allEvents }
+
+    if (allContributionsData !== 0) {
+      return res
+        .status(200)
+        .json({ allContributionsData: allContributionsData })
+    } else {
+      return res.status(404).send('Contributions not found')
+    }
+  } catch (error) {
+    return res.status(500).send("Contributions error getting data")
+  }
+}
+
 module.exports = {
   getAllEventsHandler,
   getEventById,
@@ -440,4 +470,5 @@ module.exports = {
   getMaterialsEvents,
   getEventUserContribution,
   getEventContributions,
+  getEventsContributions,
 }

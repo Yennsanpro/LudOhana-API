@@ -355,9 +355,6 @@ const getMaterialsEvents = async (req, res) => {
       id: obj.dataValues.id,
       title: obj.dataValues.title,
     }))
-    console.log(allMaterialEvent)
-    console.log(allMaterial)
-    console.log(allEvent)
     const allMaterialEventData = { allMaterialEvent, allMaterial, allEvent }
 
     if (allMaterialEventData !== 0) {

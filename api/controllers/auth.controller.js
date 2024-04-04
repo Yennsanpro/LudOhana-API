@@ -1,7 +1,7 @@
-const UserModel = require("../models/user.model")
+const UserModel = require('../models/user.model')
 
-const bcrypt = require("bcrypt") // Encrypted password
-const jwt = require("jsonwebtoken") // created token
+const bcrypt = require('bcrypt') // Encrypted password
+const jwt = require('jsonwebtoken') // created token
 
 const signup = async (req, res) => {
   //function user can signup
@@ -9,7 +9,7 @@ const signup = async (req, res) => {
     const salt = bcrypt.genSaltSync(parseInt(process.env.BCRYPT_SALT))
     req.body.password = bcrypt.hashSync(req.body.password, salt)
 
-    req.body.role = "user"
+    req.body.role = 'user'
     const user = await UserModel.create(req.body)
 
     const token = jwt.sign(
@@ -20,10 +20,15 @@ const signup = async (req, res) => {
       //{ expiresIn: '7d' } //solo se pone al terminar la aplicación
     )
 
-    res.status(200).json({ token: token, role: user.role, message: "Account created" })
+    res
+      .status(200)
+      .json({ token: token, role: user.role, message: 'Account created' })
   } catch (error) {
-    console.log(error)
-    res.status(500).send("Error Signing up")
+    if (error.name === 'SequelizeUniqueConstraintError') {
+      res.status(409).send(`Email ${error.fields.email} already exists`)
+    } else {
+      res.status(500).send('Error Signing up')
+    }
   }
 }
 
@@ -37,9 +42,9 @@ const login = async (req, res) => {
       },
     })
 
-    if (!user) return res.status(500).send("Email password incorrect")
+    if (!user) return res.status(500).send('Email password incorrect')
     if (!bcrypt.compareSync(req.body.password, user.password))
-      return res.status(500).send("Password incorrect")
+      return res.status(500).send('Password incorrect')
 
     const token = jwt.sign(
       //Token created
@@ -50,7 +55,7 @@ const login = async (req, res) => {
     return res.status(200).json({ token: token, role: user.role })
   } catch (error) {
     console.log(error)
-    res.status(500).send("Error login up")
+    res.status(500).send('Error login up')
   }
 }
 async function getUser(req, res) {
@@ -60,7 +65,7 @@ async function getUser(req, res) {
     if (user) {
       return res.status(200).json(user)
     } else {
-      return res.status(404).send("User not found")
+      return res.status(404).send('User not found')
     }
   } catch (error) {
     res.status(500).send(error.message)
@@ -76,9 +81,9 @@ async function updateUser(req, res) {
       },
     })
     if (userExist !== 0) {
-      return res.status(200).json({ message: "User updated", user: user })
+      return res.status(200).json({ message: 'User updated', user: user })
     } else {
-      return res.status(404).send("User not found")
+      return res.status(404).send('User not found')
     }
   } catch (error) {
     return res.status(500).send(error.message)
@@ -93,9 +98,9 @@ async function deleteUser(req, res) {
       },
     })
     if (user) {
-      return res.status(200).json("User deleted")
+      return res.status(200).json('User deleted')
     } else {
-      return res.status(404).send("User not found")
+      return res.status(404).send('User not found')
     }
   } catch (error) {
     return res.status(500).send(error.message)

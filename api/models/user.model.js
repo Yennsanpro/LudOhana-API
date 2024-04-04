@@ -4,6 +4,7 @@ const sequelize = require("../../db")
 const IMAGE_EXTENSIONS = ["png", "jpeg", "jpg", "webdp"]
 
 function hasValidImageExtension(path) {
+  if(!path) return
   //function created for validate image
   const lowerCasePath = path.toLowerCase()
   console.log("path", path)

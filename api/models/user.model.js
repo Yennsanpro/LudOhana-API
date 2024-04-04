@@ -6,7 +6,7 @@ const IMAGE_EXTENSIONS = ["png", "jpeg", "jpg", "webdp"]
 function hasValidImageExtension(path) {
   //function created for validate image
   const lowerCasePath = path.toLowerCase()
-  return IMAGE_EXTENSIONS(path).some((extension) =>
+  return IMAGE_EXTENSIONS[path].some((extension) =>
     lowerCasePath.endsWith(`${extension}`)
   )
 }
@@ -56,7 +56,7 @@ const UserModel = sequelize.define("user", {
     validate: {
       //on the top has the function to make this validate
       endsWithValidImageExtension(value) {
-        if (!hasValidImageExtension(value)) {
+        if (!hasValidImageExtension(value)) { 
           throw new Error(
             "Img should have these extensions: " + `${[...IMAGE_EXTENSIONS]}`
           )

@@ -14,8 +14,8 @@ const {
 
 router.post('/signup', signup)
 router.post('/login', login)
-router.get('/:id', checkAuth, getUser)
-router.put('/:id', checkAuth, updateUser) 
-router.delete('/:id', checkAuth, deleteUser) 
+router.get('', checkAuth, getUser)
+router.put('', checkAuth, updateUser) 
+router.delete('', checkAuth, deleteUser) 
 
 module.exports = router

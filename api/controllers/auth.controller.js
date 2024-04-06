@@ -74,18 +74,23 @@ async function getUser(req, res) {
 
 async function updateUser(req, res) {
   try {
-    const [userExist, user] = await UserModel.update(req.body, {
+    const salt = bcrypt.genSaltSync(parseInt(process.env.BCRYPT_SALT))
+    req.body.password = bcrypt.hashSync(req.body.password, salt)
+
+    req.body.role = 'user'
+    const [userExist] = await UserModel.update(req.body, {
       returning: true,
       where: {
         id: res.locals.user.id,
       },
     })
     if (userExist !== 0) {
-      return res.status(200).json({ message: 'User updated', user: user })
+      return res.status(200).json({ message: 'User updated' })
     } else {
       return res.status(404).send('User not found')
     }
   } catch (error) {
+    console.log(error)
     return res.status(500).send(error.message)
   }
 }

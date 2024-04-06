@@ -17,7 +17,7 @@ Discover LudOhana, the non-profit association that unites fun and learning in th
   height ="30" width = "120"> <span>**Sequelize**</span>
 + <img src = "https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white" height ="30" width = "120"> <span>**MySQL**</span>
 + <img src = "https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black"  height ="30" width = "120"> <span>**JavaScript (JS)**</span>
-+ <img src = "https://github.com/Yennsanpro/LudOhana/assets/79409049/99eca35b-2acd-41d0-be38-a42bb53f911c"  height ="30" width = "120"> <span>**Stripe**</span>
++ <img src = "https://github.com/Yennsanpro/LudOhana/assets/79409049/99eca35b-2acd-41d0-be38-a42bb53f911c"  height ="60" width = "120"> <span>**Stripe**</span>
 
 
 ## Authorization

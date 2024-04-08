@@ -106,7 +106,7 @@ async function deleteUser(req, res) {
       },
     })
     if (user) {
-      return res.status(200).json('User deleted')
+      return res.status(200).json({ message: 'User deleted' })
     } else {
       return res.status(404).send('User not found')
     }

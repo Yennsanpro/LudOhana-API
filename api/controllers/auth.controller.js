@@ -62,6 +62,7 @@ async function getUser(req, res) {
   try {
     // We used res.locals.user because user need to be logged and this action protect endpoint to receive any data
     const user = await res.locals.user
+    delete user.dataValues.password
     if (user) {
       return res.status(200).json(user)
     } else {

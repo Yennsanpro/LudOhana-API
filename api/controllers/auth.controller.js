@@ -75,8 +75,10 @@ async function getUser(req, res) {
 
 async function updateUser(req, res) {
   try {
-    const salt = bcrypt.genSaltSync(parseInt(process.env.BCRYPT_SALT))
-    req.body.password = bcrypt.hashSync(req.body.password, salt)
+    if(req.body.password){
+      const salt = bcrypt.genSaltSync(parseInt(process.env.BCRYPT_SALT))
+      req.body.password = bcrypt.hashSync(req.body.password, salt)
+    }
 
     req.body.role = 'user'
     const [userExist] = await UserModel.update(req.body, {

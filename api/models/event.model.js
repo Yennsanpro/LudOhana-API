@@ -23,13 +23,14 @@ const EventModel = sequelize.define(
       type: DataTypes.DATE,
       allowNull: false,
     },
-    address: {
+    addressURL: {
       type: DataTypes.TEXT,
       allowNull: true,
-      validate: {
-        len: [1, 50],
-      },
     },
+    addressTitle: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    }, 
     state: {
       type: DataTypes.STRING,
       allowNull: false,

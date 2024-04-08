@@ -7,9 +7,6 @@ function hasValidImageExtension(path) {
   if(!path) return
   //function created for validate image
   const lowerCasePath = path.toLowerCase()
-  console.log("path", path)
-  console.log("lowerCasePath", lowerCasePath)
-  console.log("IMAGE_EXTENSIONS", IMAGE_EXTENSIONS[path])
   return IMAGE_EXTENSIONS.some((extension) =>
     lowerCasePath.endsWith(`${extension}`)
   )

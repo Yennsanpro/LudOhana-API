@@ -70,7 +70,7 @@ const UserModel = sequelize.define(
       },
     },
   },
-  { createdAt: false, updatedAt: false }
+  { timestamps: false }
 )
 
 module.exports = UserModel

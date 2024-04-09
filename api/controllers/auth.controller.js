@@ -11,7 +11,6 @@ const signup = async (req, res) => {
 
     req.body.role = 'user'
     const user = await UserModel.create(req.body)
-
     const token = jwt.sign(
       // token created
       { email: user.email },
@@ -27,7 +26,7 @@ const signup = async (req, res) => {
     if (error.name === 'SequelizeUniqueConstraintError') {
       res.status(409).send(`Email ${error.fields.email} already exists`)
     } else {
-      res.status(500).send('Error Signing up')
+      res.status(500).send('Error Signing up' )
     }
   }
 }

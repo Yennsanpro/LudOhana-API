@@ -34,8 +34,14 @@ const createCheckout = async (req, res) => {
         },
       ],
       mode: 'payment',
-      success_url: baseUrl,
-      cancel_url: baseUrl,
+      // success_url: baseUrl,
+      // cancel_url: baseUrl,
+      // Dev Mode
+      success_url: "http://localhost:5173/events/"+req.body.eventId,
+      cancel_url: "http://localhost:5173/events/"+req.body.eventId,
+      // Produccion Mode
+      // success_url: baseUrl,
+      // cancel_url: baseUrl,
       metadata: {
         eventId: req.body.eventId,
         userId: res.locals.user.dataValues.id,

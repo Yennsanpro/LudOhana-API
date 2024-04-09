@@ -211,7 +211,7 @@ const deleteEventUser = async (req, res) => {
     const user = await res.locals.user
     const result = await event.removeUser(user)
     if (result) {
-      return res.status(200).json('User deleted from Event')
+      return res.status(200).json({message: 'User deleted from Event'})
     } else {
       return res.status(404).send('Event not found')
     }

@@ -337,16 +337,23 @@ const addMaterialEvent = async (req, res) => {
         },
       })
     } else {
-      return res.status(406).send('Material amount is not enough in stock')
+      return res.status(406).json({messageError: 'Material amount is not enough in stock'})
     }
 
     if (material_eventExist !== 0) {
-      return res.status(200).json({ result, amountUsed: req.body.amountUsed })
+      return res
+        .status(200)
+        .json({
+          message: 'Event and material updated',
+          result: req.body,
+        })
     } else {
-      return res.status(404).send('Event or material not found')
+      return res
+        .status(404)
+        .json({ messageError: 'Event or material not found' })
     }
   } catch (error) {
-    return res.status(500).send(error.message)
+    return res.status(500).json({ messageError: error.message })
   }
 }
 

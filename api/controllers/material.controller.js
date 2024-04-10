@@ -39,6 +39,7 @@ async function createMaterial(req, res) {
 async function updateMaterial(req, res) {
 	try {
 		const [materialExist] = await MaterialModel.update(req.body, {
+			returning: true,
 			where: {
 				id: req.params.materialId,
 			},

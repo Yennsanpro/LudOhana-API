@@ -56,9 +56,12 @@ const createCheckout = async (req, res) => {
 const webhook = async (req, res) => {
   try {
     let event = req.body
+    console.log("webhook event", event)
     //Check if event has "checkout.session.completed" type
     if (event.type === 'checkout.session.completed') {
       const session = event.data.object
+    console.log("webhook session", session)
+
       await createContribution(req, res, {
         amount: session.amount_total / 100,
         eventId: session.metadata.eventId,
@@ -75,6 +78,7 @@ const webhook = async (req, res) => {
 const createContribution = async (req, res, { amount, userId, eventId }) => {
   try {
     const contributionsFields = [amount, userId, eventId]
+    console.log("contributionsFields", contributionsFields)
     if (contributionsFields.every((field) => field === null)) {
       console.log('Contribution fields incomplete')
       return res.status(406).send('Contribution fields incomplete')

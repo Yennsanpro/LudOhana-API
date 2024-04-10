@@ -248,12 +248,12 @@ const getUserEventsCurrent = async (req, res) => {
     })
 
     if (events.length === 0) {
-      return res.status(404).send('No currents events found')
+      return res.status(404).json({messageError: 'No currents events found'})
     }
 
     return res.status(200).json(events)
   } catch (error) {
-    res.status(500).send('Error finding events of user')
+    res.status(500).json({messageError: 'Error finding events of user'})
     throw new Error(error)
   }
 }

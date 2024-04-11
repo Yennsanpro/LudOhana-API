@@ -52,7 +52,7 @@ router.put(
   addMaterialEvent
 )
 router.post(
-  '/:eventId/materials/:materialId',
+  '/materials',
   checkAuth,
   checkAdmin,
   createMaterialEvent

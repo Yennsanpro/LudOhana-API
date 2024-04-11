@@ -359,40 +359,35 @@ const addMaterialEvent = async (req, res) => {
 
 const createMaterialEvent = async (req, res) => {
   try {
-    const event = await EventModel.findByPk(req.params.eventId)
-    const material = await MaterialModel.findByPk(req.params.materialId) 
+    const event = await EventModel.findByPk(req.body.eventId)
+    const material = await MaterialModel.findByPk(req.body.materialId) 
 
-    let material_eventExist, result
 
     if (req.body.amountUsed <= material.amount) {
+
+
       material.amount -= req.body.amountUsed
       material.update({ amount: material.amount }) 
 
-      result = await event.addMaterial(material) 
+     // const result = await event.addMaterial(material) 
 
    
-      material_eventExist = await Material_EventModel.create(
-        { amountUsed: req.body.amountUsed },
-        {
-          where: {
-            [Op.and]: [
-              { materialId: req.params.materialId },
-              { eventId: req.params.eventId },
-            ],
-          },
-        }
+     const material_eventExist = await Material_EventModel.create(
+        { amountUsed: req.body.amountUsed,
+          materialId: req.body.materialId,
+          eventId: req.body.eventId
+         }
+     
       )
+      return res.status(200).json({ message:"Relation added"})
+      
     } else {
       return res.status(406).send('error creating materials ')
     }
 
-    if (material_eventExist !== 0) {
-      return res.status(200).json({ result, amountUsed: req.body.amountUsed })
-    } else {
-      return res.status(404).send('Event or material not found')
-    }
+    
   } catch (error) {
-    return res.status(500).send(error.message)
+    return res.status(500).send(error)
   }
 }
 

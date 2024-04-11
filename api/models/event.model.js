@@ -29,7 +29,7 @@ const EventModel = sequelize.define(
     },
     addressTitle: {
       type: DataTypes.STRING,
-      allowNull: true,
+      allowNull: false,
     }, 
     state: {
       type: DataTypes.STRING,
@@ -40,19 +40,19 @@ const EventModel = sequelize.define(
     },
     participants: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      allowNull: true,
     },
     imageUrl: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     isContributionRequired: {
       type: DataTypes.BOOLEAN,
-      allowNull: false,
+      allowNull: true,
     },
     contributionRequired: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      allowNull: true,
     },
   },
   { createdAt: false, updatedAt: false }

@@ -158,9 +158,9 @@ const createEvent = async (req, res) => {
     }
 
     const event = await EventModel.create(req.body)
-    res.status(200).json(event)
+    res.status(200).json({message: "Event created", event})
   } catch (error) {
-    res.status(500).send('Error creating event')
+    res.status(500).json({messageError: 'Error creating event'})
     throw new Error(error)
   }
 }
@@ -357,40 +357,6 @@ const addMaterialEvent = async (req, res) => {
   }
 }
 
-const createMaterialEvent = async (req, res) => {
-  try {
-    const event = await EventModel.findByPk(req.body.eventId)
-    const material = await MaterialModel.findByPk(req.body.materialId) 
-
-
-    if (req.body.amountUsed <= material.amount) {
-
-
-      material.amount -= req.body.amountUsed
-      material.update({ amount: material.amount }) 
-
-     // const result = await event.addMaterial(material) 
-
-   
-     const material_eventExist = await Material_EventModel.create(
-        { amountUsed: req.body.amountUsed,
-          materialId: req.body.materialId,
-          eventId: req.body.eventId
-         }
-     
-      )
-      return res.status(200).json({ message:"Relation added"})
-      
-    } else {
-      return res.status(406).send('error creating materials ')
-    }
-
-    
-  } catch (error) {
-    return res.status(500).send(error)
-  }
-}
-
 const getMaterialsEvents = async (req, res) => {
   try {
     const material_event_all = await Material_EventModel.findAll()
@@ -417,6 +383,29 @@ const getMaterialsEvents = async (req, res) => {
   }
 }
 
+const updateMaterialsEvents = async (req, res) => {
+  try {
+    //amountUsed, materialId, eventId
+    const [materialEventExist] = await Material_EventModel.update(req.body, {
+      returning: true,
+      where: {
+        [Op.and]: [
+          { eventId: req.params.eventId },
+          { materialId: req.params.materialId },
+        ],
+      },
+    })
+    if (materialEventExist !== 0) {
+      return res
+        .status(200)
+        .json({ message: 'Materials and materialEvent updated' })
+    } else {
+      return res.status(404).send('Materials or materialEvent not found')
+    }
+  } catch (error) {
+    return res.status(500).send('Error with materials or materialEvent')
+  }
+}
 
 const deleteMaterialsEvents = async (req, res) => {
   try {
@@ -530,6 +519,6 @@ module.exports = {
   getEventUserContribution,
   getEventContributions,
   getEventsContributions,
-  createMaterialEvent,
-  deleteMaterialsEvents
+  updateMaterialsEvents,
+  deleteMaterialsEvents,
 }

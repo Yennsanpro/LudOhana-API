@@ -161,7 +161,6 @@ const createEvent = async (req, res) => {
     res.status(200).json({message: "Event created", event})
   } catch (error) {
     res.status(500).json({messageError: 'Error creating event'})
-    throw new Error(error)
   }
 }
 

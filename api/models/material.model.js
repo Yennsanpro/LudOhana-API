@@ -16,7 +16,7 @@ const MaterialModel = sequelize.define(
 			allowNull: false,
 			validate: {
 				isInt: true,
-				min: 1
+				min: 0
 			}
 		}
 	},

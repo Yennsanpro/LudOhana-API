@@ -204,14 +204,13 @@ const registerUserEvent = async (req, res) => {
   }
 }
 
-
 const deleteEventUser = async (req, res) => {
   try {
     const event = await EventModel.findByPk(req.params.eventId)
     const user = await res.locals.user
     const result = await event.removeUser(user)
     if (result) {
-      return res.status(200).json('User deleted from Event')
+      return res.status(200).json({ message: 'User deleted from Event' })
     } else {
       return res.status(404).send('Event not found')
     }
@@ -248,12 +247,12 @@ const getUserEventsCurrent = async (req, res) => {
     })
 
     if (events.length === 0) {
-      return res.status(404).send('No currents events found')
+      return res.status(404).json({ messageError: 'No currents events found' })
     }
 
     return res.status(200).json(events)
   } catch (error) {
-    res.status(500).send('Error finding events of user')
+    res.status(500).json({ messageError: 'Error finding events of user' })
     throw new Error(error)
   }
 }
@@ -329,28 +328,32 @@ const addMaterialEvent = async (req, res) => {
       result = await event.addMaterial(material) //We asociate a material with an event
 
       //We update amountUsed asociate a material with an event
-      material_eventExist = await Material_EventModel.update(
-        { amountUsed: req.body.amountUsed },
-        {
-          where: {
-            [Op.and]: [
-              { materialId: req.params.materialId },
-              { eventId: req.params.eventId },
-            ],
-          },
-        }
-      )
+      material_eventExist = await Material_EventModel.update(req.body, {
+        where: {
+          [Op.and]: [
+            { materialId: req.params.materialId },
+            { eventId: req.params.eventId },
+          ],
+        },
+      })
     } else {
-      return res.status(406).send('Material amount is not enough in stock')
+      return res.status(406).json({messageError: 'Material amount is not enough in stock'})
     }
 
     if (material_eventExist !== 0) {
-      return res.status(200).json({ result, amountUsed: req.body.amountUsed })
+      return res
+        .status(200)
+        .json({
+          message: 'Event and material updated',
+          result: req.body,
+        })
     } else {
-      return res.status(404).send('Event or material not found')
+      return res
+        .status(404)
+        .json({ messageError: 'Event or material not found' })
     }
   } catch (error) {
-    return res.status(500).send(error.message)
+    return res.status(500).json({ messageError: error.message })
   }
 }
 
@@ -420,23 +423,20 @@ const getMaterialsEvents = async (req, res) => {
 }
 
 
-
 const deleteMaterialsEvents = async (req, res) => {
   try {
     //amountUsed, materialId, eventId
 
-    const materialEventExist = await Material_EventModel.destroy( {
-        where: {
-          [Op.and]: [
-            { eventId: req.params.eventId },
-            { materialId: req.params.materialId },
-          ],
-        },
-      })
+    const materialEventExist = await Material_EventModel.destroy({
+      where: {
+        [Op.and]: [
+          { eventId: req.params.eventId },
+          { materialId: req.params.materialId },
+        ],
+      },
+    })
     if (materialEventExist !== 0) {
-      return res
-        .status(200)
-        .json({ message: 'Delete material ' })
+      return res.status(200).json({ message: 'Delete material ' })
     } else {
       return res.status(404).send('Materials or materialEvent not found')
     }
@@ -444,7 +444,6 @@ const deleteMaterialsEvents = async (req, res) => {
     return res.status(500).send('Error with materials or materialEvent')
   }
 }
-
 
 const getEventUserContribution = async (req, res) => {
   try {

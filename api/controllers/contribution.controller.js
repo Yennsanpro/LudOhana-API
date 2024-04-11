@@ -59,6 +59,7 @@ const webhook = async (req, res) => {
     //Check if event has "checkout.session.completed" type
     if (event.type === 'checkout.session.completed') {
       const session = event.data.object
+
       await createContribution(req, res, {
         amount: session.amount_total / 100,
         eventId: session.metadata.eventId,

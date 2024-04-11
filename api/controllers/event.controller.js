@@ -472,6 +472,39 @@ const getEventContributions = async (req, res) => {
     return res.status(500).send(error.message)
   }
 }
+const createMaterialEvent = async (req, res) => {
+  try {
+    const event = await EventModel.findByPk(req.body.eventId)
+    const material = await MaterialModel.findByPk(req.body.materialId) 
+
+
+    if (req.body.amountUsed <= material.amount) {
+
+
+      material.amount -= req.body.amountUsed
+      material.update({ amount: material.amount }) 
+
+     // const result = await event.addMaterial(material) 
+
+   
+     const material_eventExist = await Material_EventModel.create(
+        { amountUsed: req.body.amountUsed,
+          materialId: req.body.materialId,
+          eventId: req.body.eventId
+         }
+     
+      )
+      return res.status(200).json({ message:"Relation added"})
+      
+    } else {
+      return res.status(406).send('error creating materials ')
+    }
+
+    
+  } catch (error) {
+    return res.status(500).send(error)
+  }
+}
 
 const getEventsContributions = async (req, res) => {
   try {
@@ -520,4 +553,5 @@ module.exports = {
   getEventsContributions,
   updateMaterialsEvents,
   deleteMaterialsEvents,
+  createMaterialEvent,
 }

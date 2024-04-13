@@ -23,7 +23,7 @@ const createCheckout = async (req, res) => {
     if (req.body.env === 'dev') {
       redirectURL = 'http://localhost:5173/events/' + req.body.eventId
     } else {
-      redirectURL = 'https://ludohana.vercel.app/events/' + req.body.eventId
+      redirectURL = 'https://ludohana.zeabur.app/events/' + req.body.eventId
     }
 
     const baseUrl = req.protocol + '://' + req.get('host')

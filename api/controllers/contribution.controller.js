@@ -18,6 +18,14 @@ const createCheckout = async (req, res) => {
     if (!event) {
       return res.status(404).send('Event not found')
     }
+
+    let redirectURL
+    if (req.body.dev === 'dev') {
+      redirectURL = 'http://localhost:5173/events/' + req.body.eventId
+    } else {
+      redirectURL = 'https://ludohana.vercel.app/events/' + req.body.eventId
+    }
+
     const baseUrl = req.protocol + '://' + req.get('host')
     const session = await stripe.checkout.sessions.create({
       line_items: [
@@ -34,14 +42,8 @@ const createCheckout = async (req, res) => {
         },
       ],
       mode: 'payment',
-      // success_url: baseUrl,
-      // cancel_url: baseUrl,
-      // Dev Mode
-      success_url: "http://localhost:5173/events/"+req.body.eventId,
-      cancel_url: "http://localhost:5173/events/"+req.body.eventId,
-      // Produccion Mode
-      // success_url: baseUrl,
-      // cancel_url: baseUrl,
+      success_url: redirectURL,
+      cancel_url: redirectURL,
       metadata: {
         eventId: req.body.eventId,
         userId: res.locals.user.dataValues.id,
@@ -95,23 +97,28 @@ const createContribution = async (req, res, { amount, userId, eventId }) => {
 
 const updateContribution = async (req, res) => {
   try {
-    const [contributionExist, contribution] = await ContributionModel.update(req.body, {
-      returning: true,
-      where: {
-        id: req.params.contributionId,
-      },
-    })
+    const [contributionExist, contribution] = await ContributionModel.update(
+      req.body,
+      {
+        returning: true,
+        where: {
+          id: req.params.contributionId,
+        },
+      }
+    )
     if (contributionExist !== 0) {
-      return res.status(200).json({ message: "Contribution updated", contribution: contribution })
+      return res
+        .status(200)
+        .json({ message: 'Contribution updated', contribution: contribution })
     } else {
-      return res.status(404).send("Contribution not found")
+      return res.status(404).send('Contribution not found')
     }
   } catch (error) {
     return res.status(500).send(error.message)
   }
 }
 
-const deleteContribution = async(req, res) => {
+const deleteContribution = async (req, res) => {
   try {
     const contribution = await ContributionModel.destroy({
       where: {

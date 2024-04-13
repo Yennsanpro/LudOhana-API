@@ -4,48 +4,44 @@ const bcrypt = require('bcrypt') // Encrypted password
 const jwt = require('jsonwebtoken') // created token
 
 function generateToken(email) {
-  return jwt.sign(
-    { email: email },
-    process.env.JWT_SECRET,
-    
-  );
+  return jwt.sign({ email: email }, process.env.JWT_SECRET)
 }
 
-
-async function loginWithGoogle( response ) {
-
+async function loginWithGoogle(profile) {
   try {
-    const email = response.emails[0].value;
+    const email = profile.emails[0].value
 
     // Verificar si el email existe en la base de datos
-    const existingUser = await UserModel.findOne({ where: { email: email } });
-    
+    const existingUser = await UserModel.findOne({ where: { email: email } })
+
     if (existingUser) {
       // Si el usuario ya existe, le asignamos un token y lo pasamos al siguiente middleware
-      const token = generateToken(existingUser.email);
-      
-     // response.status(200).json({ token: token, role:existingUser.role,message: "Account created" });
-      return { token: token, role:existingUser.role,message: "Account created"  };
+      const token = generateToken(existingUser.email)
+
+      // response.status(200).json({ token: token, role:existingUser.role,message: "Account created" });
+      return {
+        token: token,
+        role: existingUser.role,
+        message: 'Account created',
+      }
     } else {
       // Si el usuario no existe, lo creamos utilizando los datos de Google
-      const salt = bcrypt.genSaltSync(parseInt(process.env.BCRYPT_SALT));
+      const salt = bcrypt.genSaltSync(parseInt(process.env.BCRYPT_SALT))
       const newUser = await UserModel.create({
         email: email,
-        password: bcrypt.hashSync(response.id, salt),
-        name: response.name.givenName,
-        lastName: response.name.familyName,
-        role:'user'
-    
-      });
-      
-      const token = generateToken(newUser.email);
-      return { token: token, role:newUser.role,message: "Account created"  };
-     //response.status(200).json({ token: token, role:newUser.role,message: "Account created" });
-   
+        password: bcrypt.hashSync(profile.id, salt),
+        name: profile.name.givenName,
+        lastName: profile.name.familyName,
+        role: 'user',
+      })
+
+      const token = generateToken(newUser.email)
+      return { token: token, role: newUser.role, message: 'Account created' }
+      //response.status(200).json({ token: token, role:newUser.role,message: "Account created" });
     }
   } catch (error) {
-    console.log(error);
-    throw new Error('Error logging in with Google');
+    console.log(error)
+    throw new Error('Error logging in with Google')
   }
 }
 
@@ -72,7 +68,7 @@ const signup = async (req, res) => {
     if (error.name === 'SequelizeUniqueConstraintError') {
       res.status(409).send(`Email ${error.fields.email} already exists`)
     } else {
-      res.status(500).send('Error Signing up' )
+      res.status(500).send('Error Signing up')
     }
   }
 }
@@ -120,7 +116,7 @@ async function getUser(req, res) {
 
 async function updateUser(req, res) {
   try {
-    if(req.body.password){
+    if (req.body.password) {
       const salt = bcrypt.genSaltSync(parseInt(process.env.BCRYPT_SALT))
       req.body.password = bcrypt.hashSync(req.body.password, salt)
     }
@@ -166,5 +162,5 @@ module.exports = {
   getUser,
   updateUser,
   deleteUser,
-  loginWithGoogle
+  loginWithGoogle,
 }

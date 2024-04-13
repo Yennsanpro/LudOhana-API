@@ -14,6 +14,9 @@ const {
 
 router.post('/signup', signup)
 router.post('/login', login)
+router.get("/google", (req, res) => {
+    res.status(200).json({token:req.authInfo.token})
+  });
 router.get('', checkAuth, getUser)
 router.put('', checkAuth, updateUser) 
 router.delete('', checkAuth, deleteUser) 

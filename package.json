@@ -21,6 +21,8 @@
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.0",
     "mysql2": "^3.9.2",
+    "passport": "^0.5.0",
+    "passport-google-oauth": "^2.0.0",
     "path": "^0.12.7",
     "sequelize": "^6.37.1",
     "stripe": "^14.19.0"

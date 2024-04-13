@@ -18,7 +18,7 @@ router.post('/signup', signup)
 router.post('/login', login)
 router.get("/google", (req, res) => {
   //res.redirect("/Hola")
-  res.send(req.user)
+  res.status(200).json({token:req.authInfo.token})
 });
 router.get('/:id', checkAuth, getUser)
 router.put('/:id', checkAuth, updateUser) 

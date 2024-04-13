@@ -41,8 +41,8 @@ passport.use(
     },
     async function (accessToken, refreshToken, profile, done) {
      const token = await loginWithGoogle(profile);
-     console.log('token:',token)
-      done(null, profile,token);
+     //console.log('token:',token)
+     done(null, profile,token);
     }
   )
 );

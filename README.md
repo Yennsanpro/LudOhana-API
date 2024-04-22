@@ -27,8 +27,8 @@ Discover LudOhana, the non-profit association that unites fun and learning in th
 
 ## Requeriments
 
-- Nodejs
-- Database (Change .env -> Dialect with the one you use)
+- Nodejs.
+- Database (Change .env -> Dialect with the one you use).
 
 ## Installation
 
